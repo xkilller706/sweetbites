@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SweetBites - Recetas de Postres</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'verde-menta': '#6BD080',
+                        'verde-agua': '#A4C3B2',
+                        'beige-calido': '#DED6D1',
+                        'rosa-claro': '#EEC6CA',
+                        'rosa-vivo': '#FFB7C3',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-beige-calido">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-3xl"></span>
+                <h1 class="text-2xl font-bold text-rosa-vivo">SweetBites</h1>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="index.html" class="text-gray-700 hover:text-rosa-vivo transition">Inicio</a>
+                <a href="recipes.html" class="text-gray-700 hover:text-rosa-vivo transition">Recetas</a>
+                <a href="#" id="favoritesLink" class="text-gray-700 hover:text-rosa-vivo transition hidden">Favoritos</a>
+                <a href="#" id="profileLink" class="text-gray-700 hover:text-rosa-vivo transition hidden">Perfil</a>
+            </div>
+            <div>
+                <a href="login.html" id="loginBtn" class="bg-rosa-vivo text-white px-6 py-2 rounded-full hover:bg-opacity-90 transition">
+                    Iniciar Sesión
+                </a>
+                <button id="logoutBtn" class="bg-gray-600 text-white px-6 py-2 rounded-full hover:bg-gray-700 transition hidden">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section Mejorado -->
+    <section class="relative bg-gradient-to-br from-rosa-claro via-rosa-vivo to-verde-agua py-32 overflow-hidden">
+        <!-- Decoración de fondo -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 text-9xl"></div>
+            <div class="absolute top-40 right-20 text-7xl"></div>
+            <div class="absolute bottom-20 left-1/4 text-8xl"></div>
+            <div class="absolute bottom-10 right-10 text-9xl"></div>
+        </div>
+
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <div class="animate-fade-in-down">
+                <h2 class="text-6xl md:text-7xl font-bold mb-6 text-white drop-shadow-lg">
+                    Bienvenido a SweetBites
+                </h2>
+                <p class="text-2xl md:text-3xl mb-4 text-white opacity-95">
+                    Descubre las mejores recetas de postres 
+                </p>
+                <p class="text-lg md:text-xl mb-10 text-white opacity-90">
+                    Para endulzar tu día y sorprender a quienes amas
+                </p>
+                <a href="recipes.html" class="bg-white text-rosa-vivo px-10 py-4 rounded-full text-xl font-bold hover:scale-105 hover:shadow-2xl transition-all duration-300 inline-block">
+                    Explorar Recetas
+                </a>
+            </div>
+        </div>
+
+        <!-- Wave decoration -->
+        <div class="absolute bottom-0 left-0 right-0">
+            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z" fill="#DED6D1"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Características -->
+    <section class="py-20">
+        <div class="container mx-auto px-4">
+            <h3 class="text-4xl font-bold text-center mb-4 text-gray-800">¿Por qué SweetBites?</h3>
+            <p class="text-center text-gray-600 mb-12 text-lg">Tu compañero perfecto en la repostería</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-20 h-20 bg-gradient-to-br from-rosa-vivo to-rosa-claro rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
+                        
+                    </div>
+                    <h4 class="text-2xl font-bold mb-3 text-gray-800">Recetas Detalladas</h4>
+                    <p class="text-gray-600">Paso a paso con ingredientes, tiempos y dificultad claramente explicados</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-20 h-20 bg-gradient-to-br from-verde-menta to-verde-agua rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
+                        
+                    </div>
+                    <h4 class="text-2xl font-bold mb-3 text-gray-800">Calificaciones</h4>
+                    <p class="text-gray-600">Lee opiniones y valoraciones de otros usuarios para elegir mejor</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-20 h-20 bg-gradient-to-br from-rosa-vivo to-verde-menta rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
+                        
+                    </div>
+                    <h4 class="text-2xl font-bold mb-3 text-gray-800">Favoritos</h4>
+                    <p class="text-gray-600">Guarda tus recetas favoritas y organízalas en colecciones personalizadas</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categorías -->
+    <section class="py-20 bg-gradient-to-b from-white to-beige-calido">
+        <div class="container mx-auto px-4">
+            <h3 class="text-4xl font-bold text-center mb-4 text-gray-800">Categorías Populares</h3>
+            <p class="text-center text-gray-600 mb-12 text-lg">Explora nuestras deliciosas categorías</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <a href="recipes.html?categoria=Tortas" class="group bg-gradient-to-br from-rosa-claro to-rosa-vivo p-8 rounded-2xl text-center hover:shadow-2xl hover:scale-105 transition-all duration-300">
+                    <div class="text-6xl mb-3 group-hover:scale-110 transition-transform"></div>
+                    <p class="font-bold text-lg text-white">Tortas</p>
+                    <p class="text-sm text-white opacity-90 mt-1">Esponjosas y deliciosas</p>
+                </a>
+                <a href="recipes.html?categoria=Galletas" class="group bg-gradient-to-br from-verde-agua to-verde-menta p-8 rounded-2xl text-center hover:shadow-2xl hover:scale-105 transition-all duration-300">
+                    <div class="text-6xl mb-3 group-hover:scale-110 transition-transform"></div>
+                    <p class="font-bold text-lg text-white">Galletas</p>
+                    <p class="text-sm text-white opacity-90 mt-1">Crujientes y sabrosas</p>
+                </a>
+                <a href="recipes.html?categoria=Chocolates" class="group bg-gradient-to-br from-rosa-vivo to-red-400 p-8 rounded-2xl text-center hover:shadow-2xl hover:scale-105 transition-all duration-300">
+                    <div class="text-6xl mb-3 group-hover:scale-110 transition-transform"></div>
+                    <p class="font-bold text-lg text-white">Chocolates</p>
+                    <p class="text-sm text-white opacity-90 mt-1">Irresistibles delicias</p>
+                </a>
+                <a href="recipes.html?categoria=Postres Fríos" class="group bg-gradient-to-br from-verde-menta to-blue-300 p-8 rounded-2xl text-center hover:shadow-2xl hover:scale-105 transition-all duration-300">
+                    <div class="text-6xl mb-3 group-hover:scale-110 transition-transform"></div>
+                    <p class="font-bold text-lg text-white">Postres Fríos</p>
+                    <p class="text-sm text-white opacity-90 mt-1">Refrescantes y cremosos</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-2">SweetBites Recetas - Proyecto SENA 2026</p>
+            <p class="text-sm text-gray-400">Hecho con amor y mucho azúcar</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

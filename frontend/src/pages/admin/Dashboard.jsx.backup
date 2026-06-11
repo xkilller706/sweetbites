@@ -1,0 +1,191 @@
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { api } from '@services/api'
+import Card from '@components/common/Card'
+import Button from '@components/common/Button'
+import Spinner from '@components/common/Spinner'
+import toast from 'react-hot-toast'
+
+const StatsCard = ({ icon, label, value, color = 'primary', onClick }) => {
+  return (
+    <Card
+      hover={!!onClick}
+      className={`${onClick ? 'cursor-pointer' : ''} transition-all`}
+      onClick={onClick}
+    >
+      <div className="flex items-center gap-4">
+        <div className={`w-16 h-16 bg-${color}/10 rounded-xl flex items-center justify-center text-3xl`}>
+          {icon}
+        </div>
+        <div className="flex-1">
+          <p className="text-sm text-neutral-gray-600 mb-1">{label}</p>
+          <p className="text-3xl font-bold text-neutral-gray-800">{value}</p>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+const Dashboard = () => {
+  const navigate = useNavigate()
+  const [stats, setStats] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadStats()
+  }, [])
+
+  const loadStats = async () => {
+    try {
+      const response = await api.get('/admin/stats')
+      if (response.data.success) {
+        setStats(response.data.stats)
+      }
+    } catch (error) {
+      toast.error('Error al cargar estadísticas')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) return <Spinner fullScreen />
+
+  return (
+    <div className="py-12">
+      <div className="container-custom">
+        <div className="mb-8">
+          <h1 className="text-4xl font-heading text-primary mb-2">Panel de Administración</h1>
+          <p className="text-neutral-gray-600">
+            Gestiona la plataforma SweetBites
+          </p>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <StatsCard
+            icon="👥"
+            label="Total Usuarios"
+            value={stats?.totalUsuarios || 0}
+            color="primary"
+            onClick={() => navigate('/admin/users')}
+          />
+          <StatsCard
+            icon="📖"
+            label="Total Recetas"
+            value={stats?.totalRecetas || 0}
+            color="secondary"
+            onClick={() => navigate('/admin/recipes/manage')}
+          />
+          <StatsCard
+            icon="⏳"
+            label="Recetas Pendientes"
+            value={stats?.recetasPendientes || 0}
+            color="warning"
+            onClick={() => navigate('/admin/recipes/pending')}
+          />
+          <StatsCard
+            icon="💬"
+            label="Total Comentarios"
+            value={stats?.totalComentarios || 0}
+            color="info"
+            onClick={() => navigate('/admin/comments')}
+          />
+        </div>
+
+        {/* Quick Actions */}
+        <Card className="mb-8">
+          <h2 className="text-2xl font-heading text-neutral-gray-800 mb-6">Acciones Rápidas</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Button
+              variant="primary"
+              className="w-full justify-center"
+              onClick={() => navigate('/admin/recipes/pending')}
+            >
+              ⏳ Aprobar Recetas ({stats?.recetasPendientes || 0})
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-center"
+              onClick={() => navigate('/admin/users')}
+            >
+              👥 Gestionar Usuarios
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-center"
+              onClick={() => navigate('/admin/categories')}
+            >
+              🏷️ Gestionar Categorías
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-center"
+              onClick={() => navigate('/admin/comments')}
+            >
+              💬 Moderar Comentarios
+            </Button>
+          </div>
+        </Card>
+
+        {/* Recent Activity */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Usuarios Recientes */}
+          <Card>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-heading text-neutral-gray-800">Usuarios Recientes</h3>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/admin/users')}>
+                Ver todos →
+              </Button>
+            </div>
+            {stats?.usuariosRecientes?.length > 0 ? (
+              <div className="space-y-3">
+                {stats.usuariosRecientes.map((user) => (
+                  <div key={user.id} className="flex items-center gap-3 p-3 bg-neutral-gray-50 rounded-lg">
+                    <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold">
+                      {user.nombre.charAt(0)}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-neutral-gray-800">{user.nombre}</p>
+                      <p className="text-sm text-neutral-gray-500">{user.email}</p>
+                    </div>
+                    <span className="text-xs text-neutral-gray-500 capitalize">{user.rol}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-neutral-gray-500 text-center py-8">No hay usuarios recientes</p>
+            )}
+          </Card>
+
+          {/* Recetas Pendientes */}
+          <Card>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-heading text-neutral-gray-800">Recetas Pendientes</h3>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/admin/recipes/pending')}>
+                Ver todas →
+              </Button>
+            </div>
+            {stats?.recetasPendientesDetalle?.length > 0 ? (
+              <div className="space-y-3">
+                {stats.recetasPendientesDetalle.map((recipe) => (
+                  <div key={recipe.id} className="p-3 bg-warning/10 rounded-lg border border-warning/30">
+                    <p className="font-medium text-neutral-gray-800 mb-1">{recipe.nombre}</p>
+                    <div className="flex items-center gap-2 text-sm text-neutral-gray-600">
+                      <span>Por: {recipe.autor_nombre}</span>
+                      <span>•</span>
+                      <span>{recipe.categoria_nombre}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-neutral-gray-500 text-center py-8">No hay recetas pendientes</p>
+            )}
+          </Card>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Dashboard

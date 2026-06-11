@@ -1,0 +1,293 @@
+import { useState, useEffect } from 'react'
+import { api } from '@services/api'
+import Card from '@components/common/Card'
+import Button from '@components/common/Button'
+import Badge from '@components/common/Badge'
+import Spinner from '@components/common/Spinner'
+import Modal from '@components/common/Modal'
+import EmptyState from '@components/common/EmptyState'
+import { formatRelativeDate } from '@utils/helpers'
+import toast from 'react-hot-toast'
+import BackButton from '@components/common/BackButton'
+
+const RecipeApproval = () => {
+  const [recipes, setRecipes] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [expandedRecipe, setExpandedRecipe] = useState(null)
+  const [rejectModal, setRejectModal] = useState({ isOpen: false, recipe: null })
+  const [rejectReason, setRejectReason] = useState('')
+  const [processing, setProcessing] = useState(false)
+
+  useEffect(() => {
+    loadPendingRecipes()
+  }, [])
+
+  const loadPendingRecipes = async () => {
+    try {
+      const response = await api.get('/admin/recipes/pending')
+      if (response.data.success) {
+        setRecipes(response.data.recipes)
+      }
+    } catch (error) {
+      toast.error('Error al cargar recetas pendientes')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleApprove = async (recipeId) => {
+    setProcessing(true)
+    try {
+      const response = await api.put(`/admin/recipes/${recipeId}/approve`)
+      if (response.data.success) {
+        toast.success('Receta aprobada correctamente')
+        loadPendingRecipes()
+        if (expandedRecipe === recipeId) setExpandedRecipe(null)
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Error al aprobar receta')
+    } finally {
+      setProcessing(false)
+    }
+  }
+
+  const handleReject = async () => {
+    if (!rejectModal.recipe) return
+    if (!rejectReason.trim()) {
+      toast.error('Debes especificar un motivo de rechazo')
+      return
+    }
+
+    setProcessing(true)
+    try {
+      const response = await api.put(`/admin/recipes/${rejectModal.recipe.id}/reject`, {
+        motivo: rejectReason
+      })
+      if (response.data.success) {
+        toast.success('Receta rechazada')
+        setRejectModal({ isOpen: false, recipe: null })
+        setRejectReason('')
+        loadPendingRecipes()
+        if (expandedRecipe === rejectModal.recipe.id) setExpandedRecipe(null)
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Error al rechazar receta')
+    } finally {
+      setProcessing(false)
+    }
+  }
+
+  const handleDelete = async (recipeId, recipeName) => {
+    if (!confirm(`¿Estás seguro de eliminar permanentemente la receta "${recipeName}"? Esta acción no se puede deshacer.`)) {
+      return
+    }
+
+    setProcessing(true)
+    try {
+      const response = await api.delete(`/admin/recipes/${recipeId}`)
+      if (response.data.success) {
+        toast.success('Receta eliminada permanentemente')
+        loadPendingRecipes()
+        if (expandedRecipe === recipeId) setExpandedRecipe(null)
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Error al eliminar receta')
+    } finally {
+      setProcessing(false)
+    }
+  }
+
+  if (loading) return <Spinner fullScreen />
+
+  if (recipes.length === 0) {
+    return (
+      <div className="py-12">
+      <BackButton />
+        <div className="container-custom">
+          <h1 className="text-4xl font-heading text-primary mb-8">Aprobar Recetas</h1>
+          <EmptyState
+            emoji="✅"
+            title="No hay recetas pendientes"
+            message="Todas las recetas han sido revisadas"
+          />
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="py-12">
+      <div className="container-custom">
+        <div className="mb-8">
+          <h1 className="text-4xl font-heading text-primary mb-2">Aprobar Recetas</h1>
+          <p className="text-neutral-gray-600">
+            {recipes.length} {recipes.length === 1 ? 'receta pendiente' : 'recetas pendientes'} de aprobación
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          {recipes.map((recipe) => {
+            const isExpanded = expandedRecipe === recipe.id
+
+            return (
+              <Card key={recipe.id}>
+                <div className="flex flex-col md:flex-row gap-6">
+                  {/* Image */}
+                  <div className="md:w-48 h-48 flex-shrink-0">
+                    <img
+                      src={recipe.imagen || 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&h=400&fit=crop'}
+                      alt={recipe.nombre}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="text-2xl font-heading text-neutral-gray-800 mb-2">
+                          {recipe.nombre}
+                        </h3>
+                        <div className="flex gap-2 flex-wrap mb-3">
+                          <Badge variant="warning">⏳ Pendiente</Badge>
+                          <Badge variant="primary">{recipe.categoria_nombre}</Badge>
+                          <Badge variant="secondary">{recipe.dificultad}</Badge>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-neutral-gray-600 mb-4 line-clamp-2">{recipe.descripcion}</p>
+
+                    <div className="flex flex-wrap gap-4 text-sm text-neutral-gray-500 mb-4">
+                      <span> {recipe.autor_nombre}</span>
+                      <span>⏱️ {recipe.tiempo_preparacion} min</span>
+                      <span>👥 {recipe.porciones} porciones</span>
+                      <span>📅 {formatRelativeDate(recipe.fecha_creacion)}</span>
+                    </div>
+
+                    {/* Expanded Details */}
+                    {isExpanded && (
+                      <div className="mt-6 pt-6 border-t border-neutral-gray-200 space-y-6">
+                        {/* Ingredients */}
+                        <div>
+                          <h4 className="font-semibold text-lg mb-3">Ingredientes ({recipe.ingredients?.length || 0})</h4>
+                          <ul className="grid md:grid-cols-2 gap-2">
+                            {recipe.ingredients?.map((ing, i) => (
+                              <li key={i} className="flex items-center gap-2">
+                                <span className="text-primary">✓</span>
+                                <span>{ing.cantidad} {ing.unidad} de {ing.nombre}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        {/* Steps */}
+                        <div>
+                          <h4 className="font-semibold text-lg mb-3">Preparación ({recipe.steps?.length || 0} pasos)</h4>
+                          <ol className="space-y-3">
+                            {recipe.steps?.map((step) => (
+                              <li key={step.numero_paso} className="flex gap-3">
+                                <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">
+                                  {step.numero_paso}
+                                </div>
+                                <p className="flex-1 text-neutral-gray-700">{step.descripcion}</p>
+                              </li>
+                            ))}
+                          </ol>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Actions */}
+                    <div className="flex gap-3 mt-4 flex-wrap">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setExpandedRecipe(isExpanded ? null : recipe.id)}
+                      >
+                        {isExpanded ? 'Ocultar' : 'Ver'} Detalles
+                      </Button>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => handleApprove(recipe.id)}
+                        loading={processing}
+                      >
+                        ✓ Aprobar
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => setRejectModal({ isOpen: true, recipe })}
+                      >
+                        ✗ Rechazar
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleDelete(recipe.id, recipe.nombre)}
+                        loading={processing}
+                      >
+                        🗑️ Eliminar
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )
+          })}
+        </div>
+
+        {/* Reject Modal */}
+        <Modal
+          isOpen={rejectModal.isOpen}
+          onClose={() => {
+            setRejectModal({ isOpen: false, recipe: null })
+            setRejectReason('')
+          }}
+          title="Rechazar Receta"
+        >
+          <div className="space-y-4">
+            <p className="text-neutral-gray-700">
+              Vas a rechazar la receta <strong>{rejectModal.recipe?.nombre}</strong>
+            </p>
+            <div>
+              <label className="block text-sm font-medium text-neutral-gray-700 mb-2">
+                Motivo del rechazo *
+              </label>
+              <textarea
+                className="input min-h-[120px]"
+                placeholder="Explica por qué se rechaza esta receta (el usuario verá este mensaje)"
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+              />
+              <p className="text-sm text-neutral-gray-500 mt-2">
+                Sé específico para que el usuario pueda mejorar su receta.
+              </p>
+            </div>
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setRejectModal({ isOpen: false, recipe: null })
+                  setRejectReason('')
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="danger"
+                onClick={handleReject}
+                loading={processing}
+              >
+                Rechazar Receta
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      </div>
+    </div>
+  )
+}
+
+export default RecipeApproval

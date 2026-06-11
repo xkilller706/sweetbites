@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - SweetBites</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'verde-menta': '#6BD080',
+                        'verde-agua': '#A4C3B2',
+                        'beige-calido': '#DED6D1',
+                        'rosa-claro': '#EEC6CA',
+                        'rosa-vivo': '#FFB7C3',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-beige-calido min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-3xl"></span>
+                <a href="index.html" class="text-2xl font-bold text-rosa-vivo">SweetBites</a>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="index.html" class="text-gray-700 hover:text-rosa-vivo transition">Inicio</a>
+                <a href="recipes.html" class="text-gray-700 hover:text-rosa-vivo transition">Recetas</a>
+                <a href="favorites.html" class="text-gray-700 hover:text-rosa-vivo transition">Favoritos</a>
+            </div>
+            <button onclick="logout()" class="bg-gray-600 text-white px-6 py-2 rounded-full hover:bg-gray-700 transition">
+                Cerrar Sesión
+            </button>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12 animate-fade-in-down">
+            <div class="w-24 h-24 bg-gradient-to-br from-rosa-vivo to-verde-agua rounded-full flex items-center justify-center text-5xl mx-auto mb-4 shadow-xl">
+                
+            </div>
+            <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-rosa-vivo to-verde-agua bg-clip-text text-transparent mb-3">
+                Mi Perfil
+            </h1>
+            <p class="text-xl text-gray-600">Gestiona tu información personal</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Información del Usuario -->
+            <div class="bg-white rounded-2xl shadow-xl p-8 animate-fade-in-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-br from-rosa-vivo to-rosa-claro rounded-xl flex items-center justify-center text-2xl">
+                        
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800">Información Personal</h2>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Nombre</label>
+                        <input type="text" id="userName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2">Email</label>
+                        <input type="email" id="userEmail" disabled class="w-full px-4 py-2 border rounded-lg bg-gray-100">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2">Teléfono</label>
+                        <input type="tel" id="userPhone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo">
+                    </div>
+
+                    <button onclick="updateProfile()" class="w-full bg-gradient-to-r from-rosa-vivo to-rosa-claro text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="bg-white rounded-2xl shadow-xl p-8 animate-fade-in-up" style="animation-delay: 0.1s">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-br from-verde-menta to-verde-agua rounded-xl flex items-center justify-center text-2xl">
+                        
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800">Mis Estadísticas</h2>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-gradient-to-br from-rosa-claro to-rosa-vivo p-8 rounded-2xl text-center text-white shadow-lg hover:shadow-2xl hover:scale-105 transition-all">
+                        <div class="text-6xl font-bold mb-2" id="favoritesCount">0</div>
+                        <p class="text-lg font-semibold opacity-95">Recetas Favoritas</p>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-verde-agua to-verde-menta p-8 rounded-2xl text-center text-white shadow-lg hover:shadow-2xl hover:scale-105 transition-all">
+                        <div class="text-6xl font-bold mb-2" id="collectionsCount">0</div>
+                        <p class="text-lg font-semibold opacity-95">Colecciones</p>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-yellow-400 to-orange-400 p-8 rounded-2xl text-center text-white shadow-lg hover:shadow-2xl hover:scale-105 transition-all">
+                        <div class="text-6xl font-bold mb-2" id="commentsCount">0</div>
+                        <p class="text-lg font-semibold opacity-95">Comentarios</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cambiar Contraseña -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mt-8 animate-fade-in-up" style="animation-delay: 0.2s">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-gradient-to-br from-rosa-vivo to-red-400 rounded-xl flex items-center justify-center text-2xl">
+                    
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800">Cambiar Contraseña</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">Contraseña Actual</label>
+                    <input type="password" id="currentPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 mb-2">Nueva Contraseña</label>
+                    <input type="password" id="newPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo">
+                </div>
+            </div>
+
+            <button onclick="changePassword()" class="mt-4 bg-gradient-to-r from-rosa-vivo to-red-400 text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all">
+                Cambiar Contraseña
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed top-4 right-4 bg-white px-6 py-4 rounded-lg shadow-lg hidden z-50"></div>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        let currentUser = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            currentUser = getUser();
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            await loadProfile();
+            await loadStats();
+        });
+
+        async function loadProfile() {
+            try {
+                const response = await fetchAPI('/auth/profile');
+                if (response.success) {
+                    const user = response.user;
+                    document.getElementById('userName').value = user.nombre || '';
+                    document.getElementById('userEmail').value = user.email || '';
+                    document.getElementById('userPhone').value = user.telefono || '';
+                }
+            } catch (error) {
+                showToast('Error al cargar perfil', 'error');
+            }
+        }
+
+        async function updateProfile() {
+            const nombre = document.getElementById('userName').value;
+            const telefono = document.getElementById('userPhone').value;
+
+            try {
+                const response = await fetchAPI('/auth/profile', 'PUT', { nombre, telefono });
+                if (response.success) {
+                    showToast('Perfil actualizado exitosamente');
+                    // Actualizar usuario en localStorage
+                    currentUser.nombre = nombre;
+                    saveUser(currentUser);
+                }
+            } catch (error) {
+                showToast('Error al actualizar perfil', 'error');
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const favResponse = await fetchAPI('/users/favorites');
+                if (favResponse.success) {
+                    document.getElementById('favoritesCount').textContent = favResponse.favorites.length;
+                }
+
+                const colResponse = await fetchAPI('/users/collections');
+                if (colResponse.success) {
+                    document.getElementById('collectionsCount').textContent = colResponse.collections.length;
+                }
+            } catch (error) {
+                console.error('Error al cargar estadísticas:', error);
+            }
+        }
+
+        function changePassword() {
+            showToast('Función de cambio de contraseña por implementar');
+        }
+    </script>
+</body>
+</html>

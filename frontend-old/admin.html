@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - SweetBites</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'verde-menta': '#6BD080',
+                        'verde-agua': '#A4C3B2',
+                        'beige-calido': '#DED6D1',
+                        'rosa-claro': '#EEC6CA',
+                        'rosa-vivo': '#FFB7C3',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-beige-calido min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-3xl"></span>
+                <a href="index.html" class="text-2xl font-bold text-rosa-vivo">SweetBites Admin</a>
+            </div>
+            <button onclick="logout()" class="bg-gray-600 text-white px-6 py-2 rounded-full hover:bg-gray-700 transition">
+                Cerrar Sesión
+            </button>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12 animate-fade-in-down">
+            <div class="w-24 h-24 bg-gradient-to-br from-rosa-vivo to-red-500 rounded-full flex items-center justify-center text-5xl mx-auto mb-4 shadow-xl">
+                
+            </div>
+            <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-rosa-vivo to-red-500 bg-clip-text text-transparent mb-3">
+                Panel de Administración
+            </h1>
+            <p class="text-xl text-gray-600">Gestiona tu aplicación SweetBites</p>
+        </div>
+
+        <!-- Estadísticas Generales -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+            <div class="bg-gradient-to-br from-rosa-vivo to-rosa-claro p-8 rounded-2xl shadow-xl text-center text-white hover:shadow-2xl hover:scale-105 transition-all animate-scale-in">
+                <div class="text-6xl mb-3"></div>
+                <p class="text-5xl font-bold mb-2" id="totalUsers">0</p>
+                <p class="text-lg opacity-95">Usuarios Totales</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-verde-menta to-verde-agua p-8 rounded-2xl shadow-xl text-center text-white hover:shadow-2xl hover:scale-105 transition-all animate-scale-in" style="animation-delay: 0.1s">
+                <div class="text-6xl mb-3"></div>
+                <p class="text-5xl font-bold mb-2" id="totalRecipes">0</p>
+                <p class="text-lg opacity-95">Recetas Publicadas</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-yellow-400 to-orange-400 p-8 rounded-2xl shadow-xl text-center text-white hover:shadow-2xl hover:scale-105 transition-all animate-scale-in" style="animation-delay: 0.2s">
+                <div class="text-6xl mb-3"></div>
+                <p class="text-5xl font-bold mb-2" id="totalComments">0</p>
+                <p class="text-lg opacity-95">Comentarios</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-pink-400 to-purple-500 p-8 rounded-2xl shadow-xl text-center text-white hover:shadow-2xl hover:scale-105 transition-all animate-scale-in" style="animation-delay: 0.3s">
+                <div class="text-6xl mb-3"></div>
+                <p class="text-5xl font-bold mb-2" id="totalFavorites">0</p>
+                <p class="text-lg opacity-95">Favoritos</p>
+            </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-12">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-gradient-to-br from-rosa-vivo to-rosa-claro rounded-xl flex items-center justify-center text-2xl">
+                    
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800">Acciones Rápidas</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <button onclick="alert('Función por implementar')" class="bg-gradient-to-r from-rosa-vivo to-rosa-claro text-white py-6 px-6 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-105 transition-all">
+                    Nueva Receta
+                </button>
+
+                <button onclick="alert('Función por implementar')" class="bg-gradient-to-r from-verde-menta to-verde-agua text-white py-6 px-6 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-105 transition-all">
+                    Gestionar Usuarios
+                </button>
+
+                <button onclick="alert('Función por implementar')" class="bg-gradient-to-r from-yellow-400 to-orange-400 text-white py-6 px-6 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-105 transition-all">
+                    Ver Comentarios
+                </button>
+            </div>
+        </div>
+
+        <!-- Recetas Recientes -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-gradient-to-br from-rosa-vivo to-rosa-claro rounded-xl flex items-center justify-center text-2xl">
+                    
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800">Recetas Recientes</h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-rosa-claro">
+                        <tr>
+                            <th class="px-4 py-3 text-left">ID</th>
+                            <th class="px-4 py-3 text-left">Nombre</th>
+                            <th class="px-4 py-3 text-left">Categoría</th>
+                            <th class="px-4 py-3 text-left">Autor</th>
+                            <th class="px-4 py-3 text-left">Fecha</th>
+                            <th class="px-4 py-3 text-left">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentRecipes">
+                        <tr>
+                            <td colspan="6" class="px-4 py-6 text-center text-gray-500">
+                                Cargando recetas...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Usuarios Recientes -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-gradient-to-br from-verde-menta to-verde-agua rounded-xl flex items-center justify-center text-2xl">
+                    
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800">Usuarios Recientes</h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-verde-agua text-white">
+                        <tr>
+                            <th class="px-4 py-3 text-left">ID</th>
+                            <th class="px-4 py-3 text-left">Nombre</th>
+                            <th class="px-4 py-3 text-left">Email</th>
+                            <th class="px-4 py-3 text-left">Rol</th>
+                            <th class="px-4 py-3 text-left">Fecha Registro</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentUsers">
+                        <tr>
+                            <td colspan="5" class="px-4 py-6 text-center text-gray-500">
+                                Panel de administración - Funciones por implementar
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed top-4 right-4 bg-white px-6 py-4 rounded-lg shadow-lg hidden z-50"></div>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', async () => {
+            const user = getUser();
+            if (!user || user.rol !== 'admin') {
+                showToast('Acceso denegado. Solo administradores.', 'error');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                return;
+            }
+
+            await loadStats();
+            await loadRecentRecipes();
+        });
+
+        async function loadStats() {
+            try {
+                const response = await fetchAPI('/recipes');
+                if (response.success) {
+                    document.getElementById('totalRecipes').textContent = response.recipes.length;
+                }
+            } catch (error) {
+                console.error('Error al cargar estadísticas:', error);
+            }
+        }
+
+        async function loadRecentRecipes() {
+            try {
+                const response = await fetchAPI('/recipes');
+                if (response.success) {
+                    const recipes = response.recipes.slice(0, 10); // Últimas 10
+                    const tbody = document.getElementById('recentRecipes');
+
+                    tbody.innerHTML = recipes.map(recipe => `
+                        <tr class="border-b hover:bg-rosa-claro hover:bg-opacity-20 transition-all">
+                            <td class="px-6 py-4 font-bold text-gray-700">#${recipe.id}</td>
+                            <td class="px-6 py-4 font-semibold text-gray-800">${recipe.nombre}</td>
+                            <td class="px-6 py-4">
+                                <span class="bg-gradient-to-r from-rosa-vivo to-rosa-claro text-white px-3 py-1 rounded-full text-xs font-bold">
+                                    ${recipe.categoria}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600">${recipe.autor || 'N/A'}</td>
+                            <td class="px-6 py-4 text-gray-600">${new Date(recipe.fecha_creacion).toLocaleDateString()}</td>
+                            <td class="px-6 py-4">
+                                <a href="recipe-detail.html?id=${recipe.id}" class="bg-rosa-vivo text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all inline-block">
+                                    Ver →
+                                </a>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error al cargar recetas:', error);
+            }
+        }
+    </script>
+</body>
+</html>

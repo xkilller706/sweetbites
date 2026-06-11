@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from docx import Document; doc = Document\\('C:/Users/Luis Serna/Desktop/appnueva/SweetBites_Requerimientos_Completos.docx'\\); print\\('\\\\n'.join\\([p.text for p in doc.paragraphs]\\)\\)\")",
+      "Bash(python *)",
+      "Bash(npm create *)",
+      "Bash(npm install *)",
+      "Bash(npx tailwindcss *)",
+      "Bash(node node_modules/tailwindcss/lib/cli.js init -p)",
+      "Bash(node *)",
+      "Bash(npm start *)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill *)",
+      "Bash(npm run *)"
+    ]
+  }
+}

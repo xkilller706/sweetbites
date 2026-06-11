@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - SweetBites</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'verde-menta': '#6BD080',
+                        'verde-agua': '#A4C3B2',
+                        'beige-calido': '#DED6D1',
+                        'rosa-claro': '#EEC6CA',
+                        'rosa-vivo': '#FFB7C3',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-beige-calido min-h-screen flex items-center justify-center py-12 px-4">
+    <div class="max-w-md w-full">
+        <!-- Logo -->
+        <div class="text-center mb-8 animate-fade-in-down">
+            <div class="w-24 h-24 bg-gradient-to-br from-rosa-vivo to-rosa-claro rounded-full flex items-center justify-center text-5xl mx-auto mb-4 shadow-xl">
+                
+            </div>
+            <h1 class="text-5xl font-bold bg-gradient-to-r from-rosa-vivo to-verde-agua bg-clip-text text-transparent">
+                SweetBites
+            </h1>
+            <p class="text-gray-600 mt-2">Endulza tu día con nosotros</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex bg-white rounded-t-2xl overflow-hidden shadow-lg">
+            <button id="loginTab" class="flex-1 py-4 font-bold text-lg bg-gradient-to-r from-rosa-vivo to-rosa-claro text-white transition-all duration-300">
+                Iniciar Sesión
+            </button>
+            <button id="registerTab" class="flex-1 py-4 font-bold text-lg bg-white text-gray-700 transition-all duration-300 hover:bg-gray-50">
+                Registrarse
+            </button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm" class="bg-white p-8 rounded-b-2xl shadow-2xl animate-fade-in-up">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Bienvenido de vuelta</h2>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Email</label>
+                    <input type="email" id="loginEmail" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2">Contraseña</label>
+                    <input type="password" id="loginPassword" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo">
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-rosa-vivo to-rosa-claro text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                    Iniciar Sesión →
+                </button>
+            </form>
+
+            <div class="mt-4 text-center">
+                <a href="#" class="text-sm text-rosa-vivo hover:underline">¿Olvidaste tu contraseña?</a>
+            </div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" class="bg-white p-8 rounded-b-2xl shadow-2xl hidden">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Crear Cuenta</h2>
+
+            <form onsubmit="handleRegister(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Nombre Completo</label>
+                    <input type="text" id="registerName" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Email</label>
+                    <input type="email" id="registerEmail" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Teléfono (opcional)</label>
+                    <input type="tel" id="registerPhone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Contraseña</label>
+                    <input type="password" id="registerPassword" required minlength="8" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo">
+                    <p class="text-xs text-gray-500 mt-1">Mínimo 8 caracteres</p>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2">Confirmar Contraseña</label>
+                    <input type="password" id="registerPasswordConfirm" required minlength="8" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo">
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-verde-menta to-verde-agua text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                    Crear Cuenta →
+                </button>
+            </form>
+        </div>
+
+        <!-- Back to Home -->
+        <div class="mt-6 text-center">
+            <a href="index.html" class="text-rosa-vivo hover:underline">← Volver al inicio</a>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed top-4 right-4 bg-white px-6 py-4 rounded-lg shadow-lg hidden">
+            <p id="toastMessage"></p>
+        </div>
+    </div>
+
+    <script src="assets/js/auth.js"></script>
+    <script>
+        // Tab switching
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('bg-gradient-to-r', 'from-rosa-vivo', 'to-rosa-claro', 'text-white');
+            loginTab.classList.remove('bg-white', 'text-gray-700');
+            loginTab.innerHTML = 'Iniciar Sesión';
+            registerTab.classList.remove('bg-gradient-to-r', 'from-verde-menta', 'to-verde-agua', 'text-white');
+            registerTab.classList.add('bg-white', 'text-gray-700');
+            registerTab.innerHTML = 'Registrarse';
+            loginForm.classList.remove('hidden');
+            loginForm.classList.add('animate-fade-in-up');
+            registerForm.classList.add('hidden');
+        });
+
+        registerTab.addEventListener('click', () => {
+            registerTab.classList.add('bg-gradient-to-r', 'from-verde-menta', 'to-verde-agua', 'text-white');
+            registerTab.classList.remove('bg-white', 'text-gray-700');
+            registerTab.innerHTML = 'Registrarse';
+            loginTab.classList.remove('bg-gradient-to-r', 'from-rosa-vivo', 'to-rosa-claro', 'text-white');
+            loginTab.classList.add('bg-white', 'text-gray-700');
+            loginTab.innerHTML = 'Iniciar Sesión';
+            registerForm.classList.remove('hidden');
+            registerForm.classList.add('animate-fade-in-up');
+            loginForm.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>

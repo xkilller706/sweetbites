@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Fondo circular rosa pastel -->
+  <circle cx="50" cy="50" r="50" fill="#E5ADA8"/>
+
+  <!-- Cupcake minimalista -->
+  <!-- Base del cupcake (chocolate oscuro) -->
+  <path d="M 35 65 Q 35 75 40 75 L 60 75 Q 65 75 65 65 Z" fill="#725C3F"/>
+
+  <!-- Crema superior (beige claro) -->
+  <ellipse cx="50" cy="45" rx="18" ry="15" fill="#EFE8D8"/>
+  <path d="M 32 45 Q 35 35 40 30 Q 45 25 50 23 Q 55 25 60 30 Q 65 35 68 45 Z" fill="#EFE8D8"/>
+
+  <!-- Detalle de brillo (caramelo) -->
+  <ellipse cx="45" cy="40" rx="6" ry="8" fill="#D0A77B" opacity="0.6"/>
+
+  <!-- Cherry on top (acento chocolate) -->
+  <circle cx="50" cy="28" r="4" fill="#725C3F"/>
+
+  <!-- Líneas del wrapper (chocolate) -->
+  <line x1="40" y1="65" x2="38" y2="75" stroke="#725C3F" stroke-width="1.5" opacity="0.3"/>
+  <line x1="50" y1="65" x2="50" y2="75" stroke="#725C3F" stroke-width="1.5" opacity="0.3"/>
+  <line x1="60" y1="65" x2="62" y2="75" stroke="#725C3F" stroke-width="1.5" opacity="0.3"/>
+</svg>

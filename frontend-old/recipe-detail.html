@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Receta - SweetBites</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'verde-menta': '#6BD080',
+                        'verde-agua': '#A4C3B2',
+                        'beige-calido': '#DED6D1',
+                        'rosa-claro': '#EEC6CA',
+                        'rosa-vivo': '#FFB7C3',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-beige-calido">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-3xl"></span>
+                <a href="index.html" class="text-2xl font-bold text-rosa-vivo">SweetBites</a>
+            </div>
+            <a href="recipes.html" class="text-rosa-vivo hover:underline">← Volver a Recetas</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Recipe Header -->
+        <div id="recipeHeader" class="bg-white rounded-lg shadow-md p-8 mb-8">
+            <!-- Contenido cargado dinámicamente -->
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Ingredientes y Calculadora -->
+            <div class="md:col-span-1">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Ingredientes</h3>
+
+                    <!-- Calculadora de Porciones -->
+                    <div class="bg-rosa-claro p-4 rounded-lg mb-4">
+                        <p class="text-sm text-gray-700 mb-2">Porciones:</p>
+                        <div class="flex items-center justify-center gap-4">
+                            <button onclick="adjustServings(-1)" class="bg-rosa-vivo text-white w-10 h-10 rounded-full font-bold hover:bg-opacity-90">-</button>
+                            <span id="currentServings" class="text-2xl font-bold">0</span>
+                            <button onclick="adjustServings(1)" class="bg-rosa-vivo text-white w-10 h-10 rounded-full font-bold hover:bg-opacity-90">+</button>
+                        </div>
+                    </div>
+
+                    <ul id="ingredientsList" class="space-y-2">
+                        <!-- Ingredientes cargados dinámicamente -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Pasos de Preparación -->
+            <div class="md:col-span-2">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-gray-800">Preparación</h3>
+                        <button onclick="startCookingMode()" class="bg-verde-menta text-white px-6 py-2 rounded-lg hover:bg-opacity-90">
+                            Modo Cocina
+                        </button>
+                    </div>
+
+                    <div id="stepsList" class="space-y-4">
+                        <!-- Pasos cargados dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Valoraciones y Comentarios -->
+                <div class="bg-white rounded-lg shadow-md p-6 mt-8">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Valoraciones y Comentarios</h3>
+
+                    <!-- Agregar Valoración -->
+                    <div id="ratingSection" class="mb-6 hidden">
+                        <p class="mb-2">Tu valoración:</p>
+                        <div class="flex gap-2 mb-4">
+                            <button onclick="setRating(1)" class="star text-3xl text-gray-300 hover:text-yellow-400">⭐</button>
+                            <button onclick="setRating(2)" class="star text-3xl text-gray-300 hover:text-yellow-400">⭐</button>
+                            <button onclick="setRating(3)" class="star text-3xl text-gray-300 hover:text-yellow-400">⭐</button>
+                            <button onclick="setRating(4)" class="star text-3xl text-gray-300 hover:text-yellow-400">⭐</button>
+                            <button onclick="setRating(5)" class="star text-3xl text-gray-300 hover:text-yellow-400">⭐</button>
+                        </div>
+                    </div>
+
+                    <!-- Agregar Comentario -->
+                    <div id="commentSection" class="mb-6 hidden">
+                        <textarea id="commentText" placeholder="Escribe tu comentario..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo" rows="3"></textarea>
+                        <button onclick="submitComment()" class="mt-2 bg-rosa-vivo text-white px-6 py-2 rounded-lg hover:bg-opacity-90">
+                            Publicar Comentario
+                        </button>
+                    </div>
+
+                    <!-- Lista de Comentarios -->
+                    <div id="commentsList">
+                        <!-- Comentarios cargados dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modo Cocina (Fullscreen) -->
+    <div id="cookingMode" class="fixed inset-0 bg-white z-50 hidden flex flex-col">
+        <div class="bg-rosa-vivo text-white p-4 flex justify-between items-center">
+            <h2 class="text-2xl font-bold" id="cookingModeTitle">Modo Cocina</h2>
+            <button onclick="exitCookingMode()" class="text-3xl hover:opacity-75">&times;</button>
+        </div>
+
+        <div class="flex-1 flex flex-col justify-center items-center p-8">
+            <p class="text-gray-600 mb-4" id="stepCounter">Paso 1 de 1</p>
+            <p class="text-2xl md:text-3xl text-center mb-8" id="currentStepText"></p>
+
+            <div class="flex gap-4">
+                <button onclick="previousStep()" id="prevStepBtn" class="bg-gray-300 text-gray-700 px-8 py-4 rounded-lg text-xl font-semibold hover:bg-gray-400">
+                    ← Anterior
+                </button>
+                <button onclick="nextStep()" id="nextStepBtn" class="bg-rosa-vivo text-white px-8 py-4 rounded-lg text-xl font-semibold hover:bg-opacity-90">
+                    Siguiente →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed top-4 right-4 bg-white px-6 py-4 rounded-lg shadow-lg hidden z-50"></div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/recipes.js"></script>
+    <script src="assets/js/comments.js"></script>
+</body>
+</html>

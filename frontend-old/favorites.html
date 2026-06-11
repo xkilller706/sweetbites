@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Favoritos - SweetBites</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'verde-menta': '#6BD080',
+                        'verde-agua': '#A4C3B2',
+                        'beige-calido': '#DED6D1',
+                        'rosa-claro': '#EEC6CA',
+                        'rosa-vivo': '#FFB7C3',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-beige-calido min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-3xl"></span>
+                <a href="index.html" class="text-2xl font-bold text-rosa-vivo">SweetBites</a>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="index.html" class="text-gray-700 hover:text-rosa-vivo transition">Inicio</a>
+                <a href="recipes.html" class="text-gray-700 hover:text-rosa-vivo transition">Recetas</a>
+                <a href="favorites.html" class="text-rosa-vivo font-semibold">Favoritos</a>
+            </div>
+            <button id="logoutBtn" onclick="logout()" class="bg-gray-600 text-white px-6 py-2 rounded-full hover:bg-gray-700 transition">
+                Cerrar Sesión
+            </button>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12 animate-fade-in-down">
+            <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-rosa-vivo to-verde-agua bg-clip-text text-transparent mb-4">
+                Mis Recetas Favoritas
+            </h1>
+            <p class="text-xl text-gray-600">Las recetas que más te gustan, siempre a mano</p>
+        </div>
+
+        <!-- Favoritos Grid -->
+        <div id="favoritesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <!-- Favoritos cargados dinámicamente -->
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="text-center py-12">
+            <p class="text-gray-600">Cargando favoritos...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center py-20 hidden animate-fade-in-up">
+            <div class="w-32 h-32 bg-gradient-to-br from-rosa-claro to-rosa-vivo rounded-full flex items-center justify-center text-7xl mx-auto mb-6">
+                
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800 mb-3">Aún no tienes recetas favoritas</h3>
+            <p class="text-lg text-gray-600 mb-8">Explora nuestro catálogo y guarda las que más te gusten</p>
+            <a href="recipes.html" class="bg-gradient-to-r from-rosa-vivo to-rosa-claro text-white px-10 py-4 rounded-xl font-bold text-lg inline-block hover:shadow-xl hover:scale-105 transition-all duration-300">
+                Explorar Recetas
+            </a>
+        </div>
+
+        <!-- Colecciones -->
+        <div class="mt-16">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <div>
+                    <h2 class="text-4xl font-bold text-gray-800 mb-2">📚 Mis Colecciones</h2>
+                    <p class="text-gray-600">Organiza tus recetas por temas</p>
+                </div>
+                <button onclick="showCreateCollectionModal()" class="bg-gradient-to-r from-verde-menta to-verde-agua text-white px-8 py-4 rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300">
+                    Nueva Colección
+                </button>
+            </div>
+
+            <div id="collectionsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Colecciones cargadas dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para crear colección -->
+    <div id="createCollectionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl animate-scale-in">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-verde-menta to-verde-agua rounded-full flex items-center justify-center text-3xl mx-auto mb-3">
+                    
+                </div>
+                <h3 class="text-3xl font-bold text-gray-800">Nueva Colección</h3>
+                <p class="text-gray-600 mt-2">Organiza tus recetas favoritas</p>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Nombre</label>
+                <input type="text" id="collectionName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo">
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 mb-2">Descripción (opcional)</label>
+                <textarea id="collectionDescription" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-rosa-vivo" rows="3"></textarea>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="createCollection()" class="flex-1 bg-gradient-to-r from-verde-menta to-verde-agua text-white py-3 rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all">
+                    ✓ Crear
+                </button>
+                <button onclick="hideCreateCollectionModal()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-300 transition-all">
+                    ✕ Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed top-4 right-4 bg-white px-6 py-4 rounded-lg shadow-lg hidden z-50"></div>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        let favorites = [];
+        let collections = [];
+
+        // Cargar favoritos al cargar la página
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadFavorites();
+            await loadCollections();
+        });
+
+        async function loadFavorites() {
+            try {
+                const response = await fetchAPI('/api/users/favorites');
+                if (response.success) {
+                    favorites = response.favorites;
+                    displayFavorites();
+                }
+            } catch (error) {
+                console.error('Error al cargar favoritos:', error);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('emptyState').classList.remove('hidden');
+            }
+        }
+
+        function displayFavorites() {
+            const grid = document.getElementById('favoritesGrid');
+            const loading = document.getElementById('loading');
+            const emptyState = document.getElementById('emptyState');
+
+            loading.classList.add('hidden');
+
+            if (favorites.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            grid.innerHTML = favorites.map((recipe, index) => `
+                <div class="recipe-card bg-white rounded-2xl shadow-lg overflow-hidden animate-scale-in" style="animation-delay: ${index * 0.1}s">
+                    <div class="recipe-image h-48 bg-gradient-to-br from-rosa-claro to-rosa-vivo overflow-hidden relative">
+                        <div class="w-full h-full flex items-center justify-center text-6xl">
+                            
+                        </div>
+                        <div class="absolute top-2 right-2 bg-rosa-vivo text-white px-3 py-1 rounded-full text-xs font-bold">
+                            Favorito
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold text-xl mb-3 text-gray-800">${recipe.nombre}</h3>
+                        <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                            <span class="flex items-center gap-1">
+                                <span class="text-lg"></span>
+                                ${recipe.tiempo_preparacion} min
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <span class="text-lg"></span>
+                                ${recipe.dificultad}
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between mb-4 pb-4 border-b">
+                            <div class="flex items-center gap-1">
+                                <span class="text-yellow-400 text-lg"></span>
+                                <span class="text-sm font-bold text-gray-800">${parseFloat(recipe.calificacion_promedio).toFixed(1)}</span>
+                            </div>
+                            <span class="text-xs text-gray-500">${recipe.categoria}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="recipe-detail.html?id=${recipe.id}" class="flex-1 bg-gradient-to-r from-rosa-vivo to-rosa-claro text-white text-center py-3 rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all">
+                                Ver Receta →
+                            </a>
+                            <button onclick="removeFavorite(${recipe.id})" class="bg-red-100 text-red-600 px-4 py-3 rounded-xl hover:bg-red-200 transition-all" title="Quitar de favoritos">
+                                
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function removeFavorite(recipeId) {
+            if (!confirm('¿Quitar esta receta de favoritos?')) return;
+
+            try {
+                const response = await fetchAPI(`/api/users/favorites/${recipeId}`, 'DELETE');
+                if (response.success) {
+                    showToast('Receta eliminada de favoritos');
+                    await loadFavorites();
+                }
+            } catch (error) {
+                showToast('Error al eliminar de favoritos', 'error');
+            }
+        }
+
+        async function loadCollections() {
+            try {
+                const response = await fetchAPI('/api/users/collections');
+                if (response.success) {
+                    collections = response.collections;
+                    displayCollections();
+                }
+            } catch (error) {
+                console.error('Error al cargar colecciones:', error);
+            }
+        }
+
+        function displayCollections() {
+            const grid = document.getElementById('collectionsGrid');
+
+            if (collections.length === 0) {
+                grid.innerHTML = '<p class="text-gray-600 col-span-3">No tienes colecciones aún</p>';
+                return;
+            }
+
+            grid.innerHTML = collections.map((col, index) => `
+                <div class="bg-gradient-to-br from-white to-beige-calido rounded-2xl shadow-lg p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 animate-scale-in" style="animation-delay: ${index * 0.1}s">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-verde-menta to-verde-agua rounded-xl flex items-center justify-center text-2xl">
+                            
+                        </div>
+                        <span class="bg-rosa-vivo text-white px-3 py-1 rounded-full text-xs font-bold">
+                            Colección
+                        </span>
+                    </div>
+                    <h3 class="font-bold text-xl mb-2 text-gray-800">${col.nombre}</h3>
+                    <p class="text-gray-600 text-sm mb-6 h-12">${col.descripcion || 'Sin descripción'}</p>
+                    <button onclick="deleteCollection(${col.id})" class="w-full bg-red-100 text-red-600 py-2 rounded-xl font-semibold hover:bg-red-200 transition-all">
+                        Eliminar
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function showCreateCollectionModal() {
+            document.getElementById('createCollectionModal').classList.remove('hidden');
+        }
+
+        function hideCreateCollectionModal() {
+            document.getElementById('createCollectionModal').classList.add('hidden');
+            document.getElementById('collectionName').value = '';
+            document.getElementById('collectionDescription').value = '';
+        }
+
+        async function createCollection() {
+            const nombre = document.getElementById('collectionName').value;
+            const descripcion = document.getElementById('collectionDescription').value;
+
+            if (!nombre.trim()) {
+                showToast('El nombre es obligatorio', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetchAPI('/api/users/collections', 'POST', { nombre, descripcion });
+                if (response.success) {
+                    showToast('Colección creada exitosamente');
+                    hideCreateCollectionModal();
+                    await loadCollections();
+                }
+            } catch (error) {
+                showToast('Error al crear colección', 'error');
+            }
+        }
+
+        async function deleteCollection(id) {
+            if (!confirm('¿Eliminar esta colección?')) return;
+
+            try {
+                const response = await fetchAPI(`/api/users/collections/${id}`, 'DELETE');
+                if (response.success) {
+                    showToast('Colección eliminada');
+                    await loadCollections();
+                }
+            } catch (error) {
+                showToast('Error al eliminar colección', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
