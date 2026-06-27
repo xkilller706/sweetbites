@@ -141,7 +141,7 @@ router.get('/users', async (req, res) => {
         }
 
         query += ' ORDER BY fecha_registro DESC LIMIT ? OFFSET ?';
-        params.push(parseInt(limit), parseInt(offset));
+        params.push(Number(limit), Number(offset));
 
         const [users] = await db.execute(query, params);
 
@@ -302,7 +302,7 @@ router.get('/recipes', async (req, res) => {
         }
 
         query += ' GROUP BY r.id, c.id, u.id ORDER BY r.fecha_creacion DESC LIMIT ? OFFSET ?';
-        params.push(parseInt(limit), parseInt(offset));
+        params.push(Number(limit), Number(offset));
 
         const [recipes] = await db.execute(query, params);
 
