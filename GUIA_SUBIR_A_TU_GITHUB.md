@@ -197,7 +197,7 @@ Busca la línea:
 
 Cámbiala por:
 ```markdown
-**GitHub**: `https://github.com/TU-USUARIO/sweetbites.git`
+**GitHub**: `https://github.com/xkilller706/sweetbites.git`
 ```
 
 ### 2. GUIA_DEPLOY_SWEETBITES.md
@@ -209,7 +209,7 @@ Busca todas las referencias al repo viejo y cámbialas:
 git clone https://github.com/sharonllanos-hub/sweetbites.git
 
 # DESPUÉS
-git clone https://github.com/TU-USUARIO/sweetbites.git
+git clone https://github.com/xkilller706/sweetbites.git
 ```
 
 ### 3. Hacer commit de estos cambios

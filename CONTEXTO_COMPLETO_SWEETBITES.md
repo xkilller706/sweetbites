@@ -36,7 +36,7 @@ Plataforma web completa donde usuarios pueden:
 
 ### Ubicación del Código
 - **Local**: `C:\Users\Luis Serna\Downloads\appnueva (1)\appnueva`
-- **GitHub**: `https://github.com/sharonllanos-hub/sweetbites.git`
+- **GitHub**: `https://github.com/xkilller706/sweetbites.git`
 
 ### URLs Locales (Desarrollo)
 - **Frontend**: http://localhost:5173
@@ -842,7 +842,7 @@ Seguir la guía completa en: **`GUIA_DEPLOY_SWEETBITES.md`**
 ## 📞 INFORMACIÓN DE CONTACTO Y RECURSOS
 
 ### GitHub
-- **Repositorio**: https://github.com/sharonllanos-hub/sweetbites
+- **Repositorio**: https://github.com/xkilller706/sweetbites
 
 ### Documentos Importantes (En tu carpeta local)
 1. **GUIA_DEPLOY_SWEETBITES.md** - Guía paso a paso de deploy
