@@ -175,7 +175,7 @@ router.get('/collections/:id', verifyToken, async (req, res) => {
 
         const collection = collections[0];
 
-        // Obtener recetas de la colección
+        // Obtener recetas de la colección (CORREGIDO: agregar cr.fecha_agregado al GROUP BY)
         const [recipes] = await db.execute(`
             SELECT
                 r.id, r.nombre, r.descripcion, r.categoria_id, r.dificultad,
@@ -183,14 +183,15 @@ router.get('/collections/:id', verifyToken, async (req, res) => {
                 c.nombre as categoria_nombre, c.icono as categoria_icono, c.color as categoria_color,
                 COALESCE(AVG(rat.puntuacion), 0) as calificacion_promedio,
                 COUNT(DISTINCT rat.id) as total_valoraciones,
-                COUNT(DISTINCT f.id) as total_favoritos
+                COUNT(DISTINCT f.id) as total_favoritos,
+                cr.fecha_agregado
             FROM collection_recipes cr
             JOIN recipes r ON cr.receta_id = r.id
             LEFT JOIN categories c ON r.categoria_id = c.id
             LEFT JOIN ratings rat ON r.id = rat.receta_id
             LEFT JOIN favorites f ON r.id = f.receta_id
             WHERE cr.coleccion_id = ?
-            GROUP BY r.id, c.id
+            GROUP BY r.id, c.id, cr.fecha_agregado
             ORDER BY cr.fecha_agregado DESC
         `, [id]);
 

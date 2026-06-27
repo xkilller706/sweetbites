@@ -497,6 +497,18 @@ router.post('/', verifyToken, checkRecipeLimits, async (req, res) => {
             });
         }
 
+        // MAPEAR dificultad del frontend al ENUM de MySQL
+        const dificultadMap = {
+            'facil': 'Fácil',
+            'intermedio': 'Intermedio',
+            'dificil': 'Difícil',
+            // Por si acaso ya viene bien formateado
+            'Fácil': 'Fácil',
+            'Intermedio': 'Intermedio',
+            'Difícil': 'Difícil'
+        };
+        const dificultadFinal = dificultadMap[dificultad] || 'Intermedio';
+
         // Determinar estado inicial según rol del usuario
         let estado = 'pendiente'; // Por defecto, pendiente de aprobación
         if (req.user.rol === 'admin' || req.user.rol === 'editor') {
@@ -508,7 +520,7 @@ router.post('/', verifyToken, checkRecipeLimits, async (req, res) => {
             `INSERT INTO recipes (nombre, descripcion, categoria_id, dificultad,
              tiempo_preparacion, porciones, foto_principal, autor_id, estado, fecha_creacion)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-            [nombre, descripcion, categoria_id, dificultad, tiempo_preparacion,
+            [nombre, descripcion, categoria_id, dificultadFinal, tiempo_preparacion,
              porciones, foto_principal || null, req.user.id, estado]
         );
 
