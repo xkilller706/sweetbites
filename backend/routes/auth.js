@@ -8,13 +8,21 @@ const { verifyToken } = require('../middleware/auth');
 // POST /api/auth/register - Registrar nuevo usuario
 router.post('/register', async (req, res) => {
     try {
-        const { nombre, email, password, telefono } = req.body;
+        const { nombre, email, password, telefono, plan = 'gratis' } = req.body;
 
         // Validar campos obligatorios
         if (!nombre || !email || !password) {
             return res.status(400).json({
                 success: false,
                 message: 'Nombre, email y contraseña son obligatorios'
+            });
+        }
+
+        // Validar plan
+        if (plan && !['gratis', 'premium'].includes(plan)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Plan inválido. Debe ser "gratis" o "premium"'
             });
         }
 
@@ -61,9 +69,10 @@ router.post('/register', async (req, res) => {
         }
 
         // Insertar nuevo usuario
+        const fechaPremium = plan === 'premium' ? new Date() : null;
         const [result] = await db.execute(
-            'INSERT INTO users (nombre, email, password_hash, telefono, rol, fecha_registro) VALUES (?, ?, ?, ?, ?, NOW())',
-            [nombre, email, hashedPassword, telefono || null, 'usuario']
+            'INSERT INTO users (nombre, email, password_hash, telefono, rol, plan, fecha_premium, fecha_registro) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())',
+            [nombre, email, hashedPassword, telefono || null, 'usuario', plan, fechaPremium]
         );
 
         res.status(201).json({
@@ -96,7 +105,7 @@ router.post('/login', async (req, res) => {
 
         // Buscar usuario por email
         const [users] = await db.execute(
-            'SELECT id, nombre, email, password_hash, rol, foto_perfil, bio, plan, fecha_registro FROM users WHERE email = ?',
+            'SELECT id, nombre, email, password_hash, rol, foto_perfil, telefono, plan, fecha_premium, fecha_registro FROM users WHERE email = ?',
             [email]
         );
 
@@ -140,8 +149,9 @@ router.post('/login', async (req, res) => {
                 email: user.email,
                 rol: user.rol,
                 foto_perfil: user.foto_perfil,
-                bio: user.bio,
-                plan: user.plan,
+                telefono: user.telefono,
+                plan: user.plan || 'gratis',
+                fecha_premium: user.fecha_premium,
                 fecha_registro: user.fecha_registro
             }
         });
@@ -187,7 +197,7 @@ router.get('/profile', verifyToken, async (req, res) => {
 // PUT /api/auth/profile - Actualizar perfil
 router.put('/profile', verifyToken, async (req, res) => {
     try {
-        const { nombre, telefono, plan, bio, foto_perfil } = req.body;
+        const { nombre, telefono, foto_perfil } = req.body;
 
         // Construir query dinámicamente según los campos enviados
         const updates = [];
@@ -200,14 +210,6 @@ router.put('/profile', verifyToken, async (req, res) => {
         if (telefono !== undefined) {
             updates.push('telefono = ?');
             values.push(telefono || null); // Convertir '' a null
-        }
-        if (plan !== undefined) {
-            updates.push('plan = ?');
-            values.push(plan);
-        }
-        if (bio !== undefined) {
-            updates.push('bio = ?');
-            values.push(bio || null); // Convertir '' a null
         }
         if (foto_perfil !== undefined) {
             updates.push('foto_perfil = ?');
@@ -228,14 +230,6 @@ router.put('/profile', verifyToken, async (req, res) => {
             `UPDATE users SET ${updates.join(', ')} WHERE id = ?`,
             values
         );
-
-        // Si se actualizó a premium, agregar fecha
-        if (plan === 'premium') {
-            await db.execute(
-                'UPDATE users SET fecha_premium = NOW() WHERE id = ?',
-                [req.user.id]
-            );
-        }
 
         res.json({
             success: true,

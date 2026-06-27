@@ -4,6 +4,44 @@ const db = require('../config/database');
 const { verifyToken, verifyEditor } = require('../middleware/auth');
 const upload = require('../config/multer');
 
+// Middleware para verificar límites de plan
+const checkRecipeLimits = async (req, res, next) => {
+    try {
+        const [users] = await db.execute(
+            'SELECT plan FROM users WHERE id = ?',
+            [req.user.id]
+        );
+
+        if (users.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado'
+            });
+        }
+
+        if (users[0].plan === 'gratis') {
+            // Contar recetas del usuario
+            const [recipes] = await db.execute(
+                'SELECT COUNT(*) as count FROM recipes WHERE autor_id = ?',
+                [req.user.id]
+            );
+
+            if (recipes[0].count >= 5) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Los usuarios gratis pueden crear máximo 5 recetas. Actualiza a Premium para recetas ilimitadas.'
+                });
+            }
+        }
+
+        next();
+    } catch (error) {
+        console.error('Error verificando límites de plan:', error);
+        // En caso de error, permitir continuar (fail open)
+        next();
+    }
+};
+
 // POST /api/recipes/upload-image - Subir imagen de receta
 router.post('/upload-image', verifyToken, upload.single('imagen'), (req, res) => {
     try {
@@ -443,7 +481,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/recipes - Crear nueva receta (todos los usuarios autenticados)
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', verifyToken, checkRecipeLimits, async (req, res) => {
     try {
         const {
             nombre, descripcion, categoria_id, dificultad,

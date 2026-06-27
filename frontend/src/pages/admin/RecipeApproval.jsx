@@ -9,6 +9,7 @@ import EmptyState from '@components/common/EmptyState'
 import { formatRelativeDate } from '@utils/helpers'
 import toast from 'react-hot-toast'
 import BackButton from '@components/common/BackButton'
+import { UPLOAD_URL } from '@utils/constants'
 
 const RecipeApproval = () => {
   const [recipes, setRecipes] = useState([])
@@ -134,11 +135,17 @@ const RecipeApproval = () => {
                 <div className="flex flex-col md:flex-row gap-6">
                   {/* Image */}
                   <div className="md:w-48 h-48 flex-shrink-0">
-                    <img
-                      src={recipe.imagen || 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&h=400&fit=crop'}
-                      alt={recipe.nombre}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
+                    {recipe.foto_principal ? (
+                      <img
+                        src={recipe.foto_principal.startsWith('http') ? recipe.foto_principal : `${UPLOAD_URL}${recipe.foto_principal.replace('/uploads', '')}`}
+                        alt={recipe.nombre}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg">
+                        <span className="text-6xl">{recipe.categoria_icono || '🍰'}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Content */}

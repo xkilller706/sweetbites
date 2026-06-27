@@ -1,20 +1,25 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@context/AuthContext'
 import recipeService from '@services/recipeService'
 import Button from '@components/common/Button'
 import Card from '@components/common/Card'
 import Badge from '@components/common/Badge'
 import Spinner from '@components/common/Spinner'
 import EmptyState from '@components/common/EmptyState'
+import UpgradePremiumModal from '@components/modals/UpgradePremiumModal'
 import { formatRelativeDate } from '@utils/helpers'
 import toast from 'react-hot-toast'
 import BackButton from '@components/common/BackButton'
+import { UPLOAD_URL } from '@utils/constants'
 
 const MyRecipes = () => {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [recipes, setRecipes] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all') // all, pendiente, publicada, rechazada
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   useEffect(() => {
     loadMyRecipes()
@@ -68,7 +73,19 @@ const MyRecipes = () => {
               Gestiona tus recetas enviadas
             </p>
           </div>
-          <Button variant="primary" onClick={() => navigate('/user/create-recipe')}>
+          <Button
+            variant="primary"
+            onClick={() => {
+              // Validar límite para usuarios gratis
+              if (user?.plan === 'gratis' && recipes.length >= 5) {
+                toast.error('Los usuarios gratis pueden crear máximo 5 recetas')
+                toast.info('Actualiza a Premium para recetas ilimitadas')
+                setShowUpgradeModal(true)
+                return
+              }
+              navigate('/user/create-recipe')
+            }}
+          >
             + Nueva Receta
           </Button>
         </div>
@@ -141,11 +158,17 @@ const MyRecipes = () => {
                   <div className="flex flex-col md:flex-row gap-6">
                     {/* Image */}
                     <div className="md:w-48 h-48 flex-shrink-0">
-                      <img
-                        src={recipe.imagen || 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&h=400&fit=crop'}
-                        alt={recipe.nombre}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
+                      {recipe.foto_principal ? (
+                        <img
+                          src={recipe.foto_principal.startsWith('http') ? recipe.foto_principal : `${UPLOAD_URL}${recipe.foto_principal.replace('/uploads', '')}`}
+                          alt={recipe.nombre}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg">
+                          <span className="text-6xl">{recipe.categoria_icono || '🍰'}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Content */}
@@ -229,6 +252,12 @@ const MyRecipes = () => {
           </div>
         )}
       </div>
+
+      {/* Modal de Upgrade Premium */}
+      <UpgradePremiumModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+      />
     </div>
   )
 }

@@ -527,7 +527,7 @@ router.put('/profile/bio', verifyToken, async (req, res) => {
 router.get('/profile', verifyToken, async (req, res) => {
   try {
     const [users] = await db.execute(
-      'SELECT id, nombre, email, telefono, rol, foto_perfil, bio, plan, fecha_registro FROM users WHERE id = ?',
+      'SELECT id, nombre, email, telefono, rol, foto_perfil, plan, fecha_premium, fecha_registro FROM users WHERE id = ?',
       [req.user.id]
     );
 

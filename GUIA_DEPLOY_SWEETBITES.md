@@ -1,633 +1,466 @@
-# 🚀 GUÍA DE DEPLOY - SweetBites
+# 🍰 Guía Completa de Deploy - SweetBites en VPS Contabo
 
-**Proyecto:** SweetBites - Plataforma de Recetas de Postres  
-**Tecnologías:** React + Vite, Node.js + Express, MySQL  
-**Containerización:** Docker + Docker Compose  
-**Fecha:** 11 de Junio 2026
+## 📋 Información del Servidor
 
----
-
-## 📋 REQUISITOS PREVIOS
-
-Antes de comenzar, asegúrate de tener:
-
-- ✅ Cuenta en GitHub
-- ✅ Acceso al VPS de Contabo (IP: 185.245.182.220)
-- ✅ Dominio o subdominio configurado en Hostinger
-- ✅ Docker y Docker Compose instalados en el VPS
+| Detalle | Valor |
+|---------|-------|
+| **Proveedor** | Contabo VPS |
+| **IP** | `185.245.182.220` |
+| **Usuario SSH** | `root` |
+| **Password** | `MsuvT6cpONg6O9o6dMj` |
+| **Dominio** | `sweetbites.proyectoscampus.top` |
+| **Ruta de proyectos** | `/var/www` |
 
 ---
 
-## 🎯 OBJETIVO
+## 🎯 Objetivo
 
-Deployar SweetBites con **2 links (URLs)**:
-
-1. **Link 1 (Aplicación completa):** `https://sweetbites.proyectoscampus.top`
-   - Frontend (React) + Backend (Node.js) juntos
-
-2. **Link 2 (Base de datos - opcional/admin):** Acceso directo a MySQL vía puerto 3306
-   - Solo para administración con herramientas como MySQL Workbench
+Desplegar la aplicación **SweetBites** en el mismo servidor VPS donde ya está **MotoExpert**, usando un subdominio diferente pero compartiendo infraestructura.
 
 ---
 
-## 📦 PASO 1: PREPARAR EL PROYECTO LOCALMENTE
+## ✅ Pre-requisitos (Ya instalados en el VPS)
 
-### 1.1 Verificar archivos Docker creados
-
-Tu proyecto ya tiene estos archivos (generados automáticamente):
-
-```
-appnueva/
-├── docker-compose.yml          ← Orquestador de contenedores
-├── .dockerignore              ← Archivos a ignorar
-├── .env.production            ← Variables de entorno
-├── backend/
-│   └── Dockerfile             ← Imagen del backend
-└── frontend/
-    ├── Dockerfile             ← Imagen del frontend
-    └── nginx.conf             ← Configuración de Nginx
-```
-
-### 1.2 Actualizar variables de entorno
-
-Edita el archivo `.env.production` y cambia las contraseñas:
-
-```bash
-DB_ROOT_PASSWORD=TU_CONTRASEÑA_ROOT_SEGURA
-DB_PASSWORD=TU_CONTRASEÑA_DB_SEGURA
-JWT_SECRET=TU_SECRET_JWT_ALEATORIO_MUY_LARGO
-```
-
-**Genera contraseñas seguras:**
-```bash
-# En tu terminal local (Git Bash)
-openssl rand -base64 32
-```
+- ✅ Docker
+- ✅ Docker Compose
+- ✅ Nginx
+- ✅ Certbot (Let's Encrypt)
+- ✅ Git
 
 ---
 
-## 📤 PASO 2: SUBIR A GITHUB
+## 📦 Archivos Preparados
 
-### 2.1 Inicializar Git (si aún no lo has hecho)
+En tu carpeta local `appnueva (1)/appnueva/` encontrarás:
 
-```bash
-cd C:/xampp/htdocs/ProSweetBites/appnueva
-
-# Inicializar repositorio
-git init
-
-# Agregar archivos
-git add .
-
-# Primer commit
-git commit -m "feat: Preparar proyecto para deploy con Docker"
-
-# Crear rama main
-git branch -M main
-```
-
-### 2.2 Conectar con GitHub
-
-```bash
-# Reemplaza con tu usuario y nombre de repositorio
-git remote add origin https://github.com/TU_USUARIO/sweetbites.git
-
-# Push inicial
-git push -u origin main
-```
-
-**IMPORTANTE:** Si ya tienes el proyecto en GitHub, solo haz:
-
-```bash
-git add .
-git commit -m "feat: Agregar configuración Docker para deploy"
-git push
-```
+1. **`.env.vps`** → Variables de entorno para el servidor
+2. **`nginx-vps.conf`** → Configuración de Nginx
+3. **`deploy-vps.sh`** → Script automatizado de despliegue
+4. **`GUIA_DEPLOY_SWEETBITES.md`** → Este documento
 
 ---
 
-## 🖥️ PASO 3: CONECTAR AL VPS DE CONTABO
+## 🚀 Proceso de Despliegue Paso a Paso
 
-### 3.1 Conectar vía SSH
+### 📍 **PASO 1: Configurar DNS en Hostinger**
 
-Abre tu terminal (Git Bash, PowerShell, o CMD) y ejecuta:
+1. Ir a https://hpanel.hostinger.com
+2. Login con tus credenciales
+3. Ir a **Dominios** → `proyectoscampus.top`
+4. Click en **DNS / Nameservers**
+5. Click en **Agregar registro**
+6. Configurar:
+   - **Tipo**: A
+   - **Nombre**: `sweetbites`
+   - **Apunta a**: `185.245.182.220`
+   - **TTL**: `14400`
+7. Click en **Guardar**
+
+**Tiempo de propagación**: 5-30 minutos
+
+---
+
+### 📍 **PASO 2: Conectar al VPS por SSH**
+
+Desde Git Bash (Windows) o Terminal (Mac/Linux):
 
 ```bash
 ssh root@185.245.182.220
 ```
 
-**Contraseña:** `MsuvT6cpONg6O9o6dMj`
+**Contraseña**: `MsuvT6cpONg6O9o6dMj`
 
-### 3.2 Navegar al directorio de proyectos
+**Deberías ver**: Bienvenida ASCII de Contabo
 
-```bash
-cd /var/www
 ```
+  ____            _        _           
+ / ___|___  _ __ | |_ __ _| |__   ___  
+| |   / _ \| '_ \| __/ _` | '_ \ / _ \ 
+| |__| (_) | | | | || (_| | |_) | (_) |
+ \____\___/|_| |_|\__\__,_|_.__/ \___/ 
 
-Este directorio contiene todos los proyectos desplegados.
-
-### 3.3 Verificar que Docker esté instalado
-
-```bash
-docker --version
-docker compose version
-```
-
-**Si no está instalado:**
-
-```bash
-# Instalar Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sh get-docker.sh
-
-# Instalar Docker Compose
-apt update
-apt install docker-compose-plugin -y
+root@vmi3344029:~#
 ```
 
 ---
 
-## 📥 PASO 4: CLONAR EL REPOSITORIO EN EL VPS
+### 📍 **PASO 3: Clonar el Repositorio**
 
 ```bash
-# Asegúrate de estar en /var/www
+# Ir a la carpeta de proyectos
 cd /var/www
 
-# Clonar tu repositorio (reemplaza con tu URL)
-git clone https://github.com/TU_USUARIO/sweetbites.git
+# Clonar el proyecto
+git clone https://github.com/sharonllanos-hub/sweetbites.git
 
-# Entrar al proyecto
+# Entrar a la carpeta
 cd sweetbites
+
+# Verificar que los archivos estén ahí
+ls -la
 ```
+
+**Deberías ver**:
+- `backend/`
+- `frontend/`
+- `database/`
+- `docker-compose.yml`
+- `.gitignore`
 
 ---
 
-## 🐳 PASO 5: CONFIGURAR VARIABLES DE ENTORNO
-
-### 5.1 Copiar el archivo de producción
+### 📍 **PASO 4: Crear Archivo .env**
 
 ```bash
-cp .env.production .env
-```
-
-### 5.2 Editar variables (IMPORTANTE)
-
-```bash
+# Crear archivo .env
 nano .env
 ```
 
-Cambia las contraseñas por las que generaste antes:
+**Copiar y pegar el siguiente contenido**:
 
 ```env
-DB_ROOT_PASSWORD=TU_CONTRASEÑA_ROOT_SEGURA
+# Base de Datos
+DB_ROOT_PASSWORD=cKwSFbfB71O8QLKR+/YHraBiV4HaDOCF2gp3xaQTAJA=
 DB_NAME=sweetbites_db
 DB_USER=sweetbites_user
-DB_PASSWORD=TU_CONTRASEÑA_DB_SEGURA
-JWT_SECRET=TU_SECRET_JWT_ALEATORIO
+DB_PASSWORD=zckMDAFuR58LBrPfaI+5MnDl9r94XuC+oED+93sc95k=
+
+# JWT Secret
+JWT_SECRET=c3Vmt9SGRIaBpnb1yKsVoDZHYhSePOcdPnG5icMugmnwt4e5DsJS2I6kHj0/oGMO
+
+# Puerto del Backend
 PORT=3000
 ```
 
-**Guardar:** `Ctrl + O` → `Enter` → `Ctrl + X`
+**Guardar**:
+- Presiona `Ctrl + O` → Enter → `Ctrl + X`
 
 ---
 
-## 🚀 PASO 6: LEVANTAR DOCKER COMPOSE
-
-### 6.1 Construir y levantar los contenedores
+### 📍 **PASO 5: Levantar los Contenedores Docker**
 
 ```bash
+# Construir y levantar contenedores en segundo plano
 docker compose up -d --build
 ```
 
-Esto creará y levantará **3 contenedores:**
+**Esto tomará 3-5 minutos**. Verás algo como:
 
-1. **sweetbites-db** (MySQL 8.0) - Puerto 3306
-2. **sweetbites-backend** (Node.js) - Puerto 3000
-3. **sweetbites-frontend** (React + Nginx) - Puerto 80
+```
+[+] Building 145.2s (34/34) FINISHED
+[+] Running 4/4
+ ✔ Network sweetbites_sweetbites-network  Created
+ ✔ Container sweetbites-db                Started
+ ✔ Container sweetbites-backend           Started
+ ✔ Container sweetbites-frontend          Started
+```
 
-### 6.2 Verificar que estén corriendo
+**Verificar que estén corriendo**:
 
 ```bash
 docker ps
 ```
 
-Deberías ver algo como:
+**Deberías ver 3 contenedores**:
 
-```
-CONTAINER ID   IMAGE              STATUS         PORTS                    NAMES
-abc123...      sweetbites-frontend   Up 2 minutes   0.0.0.0:80->80/tcp       sweetbites-frontend
-def456...      sweetbites-backend    Up 2 minutes   0.0.0.0:3000->3000/tcp   sweetbites-backend
-ghi789...      mysql:8.0             Up 2 minutes   0.0.0.0:3306->3306/tcp   sweetbites-db
-```
-
-### 6.3 Ver logs (si hay problemas)
-
-```bash
-# Ver logs de todos los contenedores
-docker compose logs
-
-# Ver logs de un contenedor específico
-docker compose logs frontend
-docker compose logs backend
-docker compose logs database
-
-# Seguir los logs en tiempo real
-docker compose logs -f
-```
+| CONTAINER ID | IMAGE | PORTS | NAMES |
+|--------------|-------|-------|-------|
+| xxx | sweetbites-frontend | 0.0.0.0:80->80/tcp | sweetbites-frontend |
+| xxx | sweetbites-backend | 0.0.0.0:3000->3000/tcp | sweetbites-backend |
+| xxx | mysql:8.0 | 0.0.0.0:3306->3306/tcp | sweetbites-db |
 
 ---
 
-## 🌐 PASO 7: CONFIGURAR NGINX EN EL VPS
+### 📍 **PASO 6: Configurar Nginx**
 
-### 7.1 Crear configuración de Nginx
+#### 6.1 Crear archivo de configuración
 
 ```bash
 nano /etc/nginx/sites-available/sweetbites.proyectoscampus.top
 ```
 
-Pega esta configuración:
+#### 6.2 Copiar la siguiente configuración
 
 ```nginx
-# Redirigir HTTP a HTTPS
+# HTTP - Redirección a HTTPS
 server {
     listen 80;
+    listen [::]:80;
     server_name sweetbites.proyectoscampus.top;
-
-    # Permitir Certbot para validación
-    location /.well-known/acme-challenge/ {
-        root /var/www/html;
-    }
-
-    # Redirigir todo lo demás a HTTPS
-    location / {
-        return 301 https://$host$request_uri;
-    }
+    return 301 https://$server_name$request_uri;
 }
 
-# Servidor HTTPS
+# HTTPS
 server {
     listen 443 ssl http2;
+    listen [::]:443 ssl http2;
     server_name sweetbites.proyectoscampus.top;
 
-    # Certificados SSL (se generarán después)
+    # Certificados SSL
     ssl_certificate /etc/letsencrypt/live/sweetbites.proyectoscampus.top/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/sweetbites.proyectoscampus.top/privkey.pem;
 
-    # Configuración SSL moderna
+    # Protocolos SSL
     ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
     ssl_prefer_server_ciphers on;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256;
 
-    # Seguridad adicional
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-    add_header X-Frame-Options DENY;
-    add_header X-Content-Type-Options nosniff;
-    add_header X-XSS-Protection "1; mode=block";
-
-    # Proxy a Docker (puerto 80 del contenedor frontend)
+    # Proxy hacia contenedor frontend (puerto 80)
     location / {
         proxy_pass http://127.0.0.1:80;
         proxy_http_version 1.1;
-        
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
         
         proxy_connect_timeout 60s;
-        proxy_read_timeout 60s;
         proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
     }
 
-    # Aumentar tamaño de upload para fotos
+    # Logs
+    access_log /var/log/nginx/sweetbites_access.log;
+    error_log /var/log/nginx/sweetbites_error.log;
+
+    # Tamaño máximo de subida
     client_max_body_size 10M;
 }
 ```
 
-**Guardar:** `Ctrl + O` → `Enter` → `Ctrl + X`
+**Guardar**: `Ctrl + O` → Enter → `Ctrl + X`
 
-### 7.2 Habilitar el sitio
+#### 6.3 Habilitar el sitio
 
 ```bash
 # Crear enlace simbólico
 ln -s /etc/nginx/sites-available/sweetbites.proyectoscampus.top /etc/nginx/sites-enabled/
 
-# Verificar configuración
+# Verificar sintaxis
 nginx -t
+```
 
-# Si todo está OK, recargar Nginx
+**Deberías ver**:
+```
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+```
+
+#### 6.4 Recargar Nginx
+
+```bash
 systemctl reload nginx
 ```
 
 ---
 
-## 🔒 PASO 8: GENERAR CERTIFICADO SSL (HTTPS)
-
-### 8.1 Instalar Certbot
-
-```bash
-apt update
-apt install certbot python3-certbot-nginx -y
-```
-
-### 8.2 Generar certificado
+### 📍 **PASO 7: Generar Certificado SSL (HTTPS)**
 
 ```bash
 certbot --nginx -d sweetbites.proyectoscampus.top
 ```
 
-**Durante el proceso:**
-1. Ingresa tu email
-2. Acepta los términos (Y)
-3. Acepta compartir email (Y o N)
-4. Selecciona opción 2 (Redirect HTTP to HTTPS)
+**Responder las preguntas**:
 
-### 8.3 Renovación automática
+1. **Email**: Tu email (ej: `tuemail@gmail.com`)
+2. **Términos de servicio**: `A` (Aceptar)
+3. **Redirigir HTTP → HTTPS**: `2` (Sí)
 
-Certbot ya configura renovación automática. Verifica:
+**Certbot automáticamente**:
+- ✅ Genera los certificados
+- ✅ Actualiza la configuración de Nginx
+- ✅ Recarga Nginx
 
-```bash
-certbot renew --dry-run
+**Verás**:
+```
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/sweetbites.proyectoscampus.top/fullchain.pem
+Key is saved at: /etc/letsencrypt/live/sweetbites.proyectoscampus.top/privkey.pem
 ```
 
 ---
 
-## 🔗 PASO 9: CONFIGURAR DNS EN HOSTINGER
+### 📍 **PASO 8: Verificación Final**
 
-### 9.1 Ir al panel de Hostinger
-
-1. Accede a https://hostinger.com
-2. Ve a **Dominios** → **proyectoscampus.top**
-3. Click en **DNS / Name Servers**
-
-### 9.2 Agregar registro A
-
-**Crear nuevo registro:**
-
-- **Tipo:** A
-- **Nombre:** sweetbites
-- **Apunta a:** `185.245.182.220`
-- **TTL:** 14400 (o el mínimo permitido)
-
-**Guardar cambios**
-
-### 9.3 Esperar propagación DNS
-
-La propagación puede tardar de **5 minutos a 24 horas**.
-
-Verifica con:
+#### 8.1 Verificar contenedores
 
 ```bash
-nslookup sweetbites.proyectoscampus.top
+docker ps
+docker logs sweetbites-backend --tail 50
+docker logs sweetbites-frontend --tail 50
 ```
 
-O en: https://dnschecker.org
+#### 8.2 Probar conectividad local
 
----
+```bash
+curl -I http://127.0.0.1:80
+```
 
-## ✅ PASO 10: VERIFICAR EL DEPLOY
+Debe responder con HTTP 200
 
-### 10.1 Probar la aplicación
+#### 8.3 Probar desde el navegador
 
 Abre en tu navegador:
 
-```
-https://sweetbites.proyectoscampus.top
-```
+1. **HTTP** (debe redirigir): `http://sweetbites.proyectoscampus.top`
+2. **HTTPS** (debe cargar): `https://sweetbites.proyectoscampus.top`
 
-Deberías ver la página principal de SweetBites.
+**Debes ver**:
+- ✅ Página de inicio de SweetBites
+- ✅ Candado verde (SSL activo)
+- ✅ Sin errores de consola
 
-### 10.2 Verificar funcionalidades
+#### 8.4 Probar funcionalidades
 
 - ✅ Registro de usuario
 - ✅ Login
-- ✅ Ver recetas
-- ✅ Crear receta (con upload de imagen)
-- ✅ Comentarios
-- ✅ Favoritos
-- ✅ Panel de admin
-
-### 10.3 Verificar API directamente
-
-```bash
-curl https://sweetbites.proyectoscampus.top/api/recipes
-```
+- ✅ Crear receta
+- ✅ Subir imagen
+- ✅ Sistema de planes (gratis/premium)
 
 ---
 
-## 🔧 COMANDOS ÚTILES
+## 🔧 Comandos Útiles
 
-### Gestionar contenedores
+### Ver logs en tiempo real
 
 ```bash
-# Ver contenedores corriendo
-docker ps
+# Backend
+docker logs sweetbites-backend -f
 
-# Ver todos los contenedores (incluso detenidos)
-docker ps -a
+# Frontend
+docker logs sweetbites-frontend -f
 
-# Ver logs
-docker compose logs -f
+# Base de datos
+docker logs sweetbites-db -f
+```
 
-# Reiniciar servicios
+### Reiniciar servicios
+
+```bash
+# Reiniciar todos
 docker compose restart
 
-# Detener todo
-docker compose down
+# Reiniciar solo backend
+docker compose restart backend
 
-# Levantar todo
-docker compose up -d
-
-# Reconstruir imágenes
-docker compose up -d --build
-
-# Ver uso de recursos
-docker stats
+# Reiniciar solo frontend
+docker compose restart frontend
 ```
 
 ### Actualizar código
 
 ```bash
-# Conectar al VPS
-ssh root@185.245.182.220
-
-# Ir al proyecto
 cd /var/www/sweetbites
-
-# Pull de cambios
 git pull origin main
-
-# Reconstruir y reiniciar
 docker compose up -d --build
-
-# Ver logs para verificar
-docker compose logs -f
 ```
 
-### Backup de base de datos
+### Ver estado de Nginx
 
 ```bash
-# Hacer backup
-docker exec sweetbites-db mysqldump -u root -p sweetbites_db > backup_$(date +%Y%m%d).sql
-
-# Restaurar backup
-docker exec -i sweetbites-db mysql -u root -p sweetbites_db < backup_20260611.sql
-```
-
-### Acceso directo a MySQL
-
-```bash
-# Desde el VPS
-docker exec -it sweetbites-db mysql -u root -p
-
-# Desde tu PC (si el puerto 3306 está abierto)
-mysql -h 185.245.182.220 -P 3306 -u sweetbites_user -p sweetbites_db
+systemctl status nginx
+tail -f /var/log/nginx/sweetbites_access.log
+tail -f /var/log/nginx/sweetbites_error.log
 ```
 
 ---
 
-## 🐛 SOLUCIÓN DE PROBLEMAS
+## ⚠️ Solución de Problemas
 
-### Problema 1: "Cannot connect to database"
-
-**Solución:**
+### Problema: Contenedores no inician
 
 ```bash
-# Verificar que la DB esté corriendo
-docker compose ps
+# Ver logs detallados
+docker compose logs
 
-# Ver logs de la base de datos
-docker compose logs database
-
-# Reiniciar servicio de DB
-docker compose restart database
+# Reiniciar desde cero
+docker compose down
+docker compose up -d --build
 ```
 
-### Problema 2: "502 Bad Gateway"
-
-**Solución:**
+### Problema: Nginx error 502 Bad Gateway
 
 ```bash
-# Verificar que el backend esté corriendo
-docker compose logs backend
+# Verificar que contenedores estén corriendo
+docker ps
 
-# Verificar conectividad
-docker exec sweetbites-backend ping -c 3 database
+# Verificar puerto 80
+curl -I http://127.0.0.1:80
 
-# Reiniciar backend
-docker compose restart backend
+# Ver logs de frontend
+docker logs sweetbites-frontend
 ```
 
-### Problema 3: Imágenes no se suben
-
-**Solución:**
+### Problema: Error de permisos
 
 ```bash
-# Verificar permisos del directorio uploads
-docker exec sweetbites-backend ls -la /app/uploads
-
-# Crear directorios si no existen
-docker exec sweetbites-backend mkdir -p /app/uploads/recipes /app/uploads/profiles
-
-# Dar permisos
+# Dar permisos al directorio uploads
 docker exec sweetbites-backend chmod -R 777 /app/uploads
 ```
 
-### Problema 4: Certificado SSL no se genera
-
-**Solución:**
+### Problema: Base de datos no conecta
 
 ```bash
-# Asegúrate de que el puerto 80 esté abierto
-ufw allow 80/tcp
-ufw allow 443/tcp
+# Verificar logs de BD
+docker logs sweetbites-db
 
-# Verifica que el dominio apunte al VPS
-nslookup sweetbites.proyectoscampus.top
-
-# Intenta de nuevo
-certbot --nginx -d sweetbites.proyectoscampus.top
+# Verificar variables de entorno
+docker exec sweetbites-backend env | grep DB_
 ```
 
 ---
 
-## 📊 ARQUITECTURA FINAL
+## 📊 Diferencias con MotoExpert
 
-```
-Internet
-   |
-   v
-[DNS Hostinger: sweetbites.proyectoscampus.top]
-   |
-   v
-[VPS Contabo: 185.245.182.220]
-   |
-   ├─> [Nginx] (Puerto 443 HTTPS)
-   |      |
-   |      v
-   |   [Docker Network: sweetbites-network]
-   |      |
-   |      ├─> [sweetbites-frontend] (Nginx:80)
-   |      |      └─> Sirve React build + proxy a backend
-   |      |
-   |      ├─> [sweetbites-backend] (Node.js:3000)
-   |      |      └─> API REST + uploads
-   |      |
-   |      └─> [sweetbites-db] (MySQL:3306)
-   |             └─> Base de datos
-   |
-   └─> [Volumen: mysql_data]
-          └─> Persistencia de datos
-```
+| Aspecto | MotoExpert | SweetBites |
+|---------|-----------|------------|
+| **Subdominio** | motoexpert.proyectoscampus.top | sweetbites.proyectoscampus.top |
+| **Puerto** | 8000 | 80 |
+| **Arquitectura** | Monolítica | Multi-contenedor (3) |
+| **Base de datos** | Externa | MySQL en Docker |
+| **Nginx interno** | No | Sí (en frontend) |
 
 ---
 
-## 🎯 RESULTADO FINAL
+## ✅ Checklist de Deploy
 
-Tendrás **2 links funcionales:**
-
-1. **Aplicación Web:**
-   - URL: `https://sweetbites.proyectoscampus.top`
-   - Frontend + Backend integrados
-   - Certificado SSL (HTTPS)
-   - Listo para usuarios finales
-
-2. **Base de Datos (acceso admin):**
-   - Host: `185.245.182.220`
-   - Puerto: `3306`
-   - Usuario: `sweetbites_user`
-   - Password: (tu contraseña configurada)
-   - Acceso desde MySQL Workbench u otras herramientas
-
----
-
-## 📝 CHECKLIST FINAL
-
-Antes de presentar, verifica:
-
-- [ ] La aplicación carga en `https://sweetbites.proyectoscampus.top`
-- [ ] El certificado SSL es válido (candado verde en el navegador)
-- [ ] Puedes registrarte como usuario nuevo
-- [ ] Puedes iniciar sesión
-- [ ] Puedes crear una receta (con foto)
-- [ ] Puedes ver recetas
-- [ ] Puedes comentar y valorar
-- [ ] Puedes agregar a favoritos
-- [ ] El panel de admin funciona
-- [ ] Las imágenes se suben y ven correctamente
-- [ ] Todos los contenedores están corriendo (`docker ps`)
-- [ ] Los logs no muestran errores críticos (`docker compose logs`)
+- [ ] DNS configurado en Hostinger
+- [ ] Conectado al VPS por SSH
+- [ ] Repositorio clonado en `/var/www/sweetbites`
+- [ ] Archivo `.env` creado
+- [ ] Contenedores levantados (`docker ps` muestra 3)
+- [ ] Configuración Nginx creada
+- [ ] Enlace simbólico habilitado
+- [ ] Sintaxis Nginx verificada (`nginx -t`)
+- [ ] Nginx recargado
+- [ ] Certificado SSL generado
+- [ ] Sitio accesible vía HTTPS
+- [ ] Login funciona
+- [ ] Subida de imágenes funciona
+- [ ] Sistema de planes funciona
 
 ---
 
-## 🚀 ¡DEPLOY COMPLETO!
+## 🎉 ¡Deploy Completado!
 
-Tu proyecto SweetBites está ahora desplegado profesionalmente con Docker.
+Tu aplicación **SweetBites** ya está en producción en:
 
-**¿Necesitas ayuda?** Revisa la sección de **Solución de Problemas** arriba.
+**🌐 https://sweetbites.proyectoscampus.top**
 
 ---
 
-**Creado el:** 11 de Junio 2026  
-**Proyecto:** SweetBites v1.0  
-**Stack:** React + Vite, Node.js + Express, MySQL, Docker, Nginx
+## 📞 Soporte
+
+Si tienes problemas, revisa:
+1. Logs de Docker: `docker logs sweetbites-backend -f`
+2. Logs de Nginx: `tail -f /var/log/nginx/sweetbites_error.log`
+3. Estado de contenedores: `docker ps`
+
+---
+
+**Última actualización**: Junio 2026  
+**Versión**: 1.0

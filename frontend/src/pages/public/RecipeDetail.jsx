@@ -17,6 +17,7 @@ import CommentThread from '@components/recipes/CommentThread'
 import toast from 'react-hot-toast'
 import BackButton from '@components/common/BackButton'
 import UpgradePremiumModal from '@components/modals/UpgradePremiumModal'
+import { UPLOAD_URL } from '@utils/constants'
 
 const RecipeDetail = () => {
   const { id } = useParams()
@@ -256,13 +257,17 @@ const RecipeDetail = () => {
         {/* Header */}
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <div>
-            <img
-              src={recipe.foto_principal
-                ? (recipe.foto_principal.startsWith('http') ? recipe.foto_principal : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000'}${recipe.foto_principal}`)
-                : "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=800&h=600&fit=crop"}
-              alt={recipe.nombre}
-              className="w-full h-96 object-cover rounded-2xl shadow-lg"
-            />
+            {recipe.foto_principal ? (
+              <img
+                src={recipe.foto_principal.startsWith('http') ? recipe.foto_principal : `${UPLOAD_URL}${recipe.foto_principal.replace('/uploads', '')}`}
+                alt={recipe.nombre}
+                className="w-full h-96 object-cover rounded-2xl shadow-lg"
+              />
+            ) : (
+              <div className="w-full h-96 flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 rounded-2xl shadow-lg">
+                <span className="text-9xl">{recipe.categoria_icono || '🍰'}</span>
+              </div>
+            )}
           </div>
 
           <div>

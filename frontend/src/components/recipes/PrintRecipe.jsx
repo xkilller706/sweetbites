@@ -1,15 +1,31 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import { useAuth } from '@context/AuthContext'
 import Button from '@components/common/Button'
+import UpgradePremiumModal from '@components/modals/UpgradePremiumModal'
 import { Printer, Download } from 'lucide-react'
+import { UPLOAD_URL } from '@utils/constants'
+import toast from 'react-hot-toast'
 
 const PrintRecipe = ({ recipe }) => {
   const printRef = useRef()
+  const { user } = useAuth()
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   const handlePrint = () => {
+    if (user?.plan !== 'premium') {
+      toast.error('Imprimir recetas es exclusivo de Premium')
+      setShowUpgradeModal(true)
+      return
+    }
     window.print()
   }
 
   const handleExportPDF = () => {
+    if (user?.plan !== 'premium') {
+      toast.error('Descargar PDF es exclusivo de Premium')
+      setShowUpgradeModal(true)
+      return
+    }
     // Usar window.print() con configuración de PDF
     // El usuario puede seleccionar "Guardar como PDF" en el diálogo de impresión
     window.print()
@@ -115,7 +131,7 @@ const PrintRecipe = ({ recipe }) => {
           {recipe.foto_principal && (
             <div className="mb-6 print:mb-8">
               <img
-                src={recipe.foto_principal.startsWith('http') ? recipe.foto_principal : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000'}${recipe.foto_principal}`}
+                src={recipe.foto_principal.startsWith('http') ? recipe.foto_principal : `${UPLOAD_URL}${recipe.foto_principal.replace('/uploads', '')}`}
                 alt={recipe.nombre}
                 className="w-full max-w-2xl mx-auto rounded-lg shadow-md print:max-w-full"
               />
@@ -191,6 +207,12 @@ const PrintRecipe = ({ recipe }) => {
           )}
         </div>
       </div>
+
+      {/* Modal de Upgrade Premium */}
+      <UpgradePremiumModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+      />
     </div>
   )
 }

@@ -113,6 +113,13 @@ export const AuthProvider = ({ children }) => {
     return user?.rol === 'admin'
   }
 
+  /**
+   * Verificar si tiene plan premium
+   */
+  const isPremium = () => {
+    return user?.plan === 'premium'
+  }
+
   const value = {
     user,
     loading,
@@ -122,6 +129,7 @@ export const AuthProvider = ({ children }) => {
     updateProfile,
     isAuthenticated,
     isAdmin,
+    isPremium,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

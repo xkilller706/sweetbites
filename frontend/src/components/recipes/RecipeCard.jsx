@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Clock, Heart, Star, ChefHat } from 'lucide-react'
 import { cn } from '@utils/cn'
+import { UPLOAD_URL } from '@utils/constants'
 
 const difficultyColors = {
   'Fácil': 'bg-green-100 text-green-700',
@@ -26,7 +27,7 @@ export default function RecipeCard({ recipe, onFavoriteToggle, isFavorite = fals
         <Link to={`/recipes/${recipe.id}`}>
           {!imageError && recipe.foto_principal ? (
             <img
-              src={recipe.foto_principal.startsWith('http') ? recipe.foto_principal : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000'}${recipe.foto_principal}`}
+              src={recipe.foto_principal.startsWith('http') ? recipe.foto_principal : `${UPLOAD_URL}${recipe.foto_principal.replace('/uploads', '')}`}
               alt={recipe.nombre}
               className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
               onError={() => setImageError(true)}

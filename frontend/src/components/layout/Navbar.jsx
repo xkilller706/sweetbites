@@ -16,6 +16,7 @@ import {
 import { useAuth } from '@context/AuthContext'
 import { cn } from '@utils/cn'
 import NotificationBell from './NotificationBell'
+import { UPLOAD_URL } from '@utils/constants'
 
 const navLinks = [
   { href: '/', label: 'Inicio' },
@@ -96,9 +97,17 @@ const Navbar = () => {
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 className="flex items-center gap-2 rounded-full bg-primary/10 py-1.5 pl-1.5 pr-3 transition-colors hover:bg-primary/20"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-sm font-semibold text-white">
-                  {getInitials(user?.nombre)}
-                </div>
+                {user?.foto_perfil ? (
+                  <img
+                    src={user.foto_perfil.startsWith('http') ? user.foto_perfil : `${UPLOAD_URL}${user.foto_perfil.replace('/uploads', '')}`}
+                    alt={user?.nombre}
+                    className="h-8 w-8 rounded-full object-cover ring-2 ring-white"
+                  />
+                ) : (
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-sm font-semibold text-white">
+                    {getInitials(user?.nombre)}
+                  </div>
+                )}
                 <ChevronDown
                   className={cn(
                     'h-4 w-4 text-neutral-gray-800 transition-transform',
@@ -116,8 +125,30 @@ const Navbar = () => {
                     className="absolute right-0 mt-2 w-56 rounded-2xl border border-white/40 glass p-2 shadow-glass"
                   >
                     <div className="border-b border-neutral-gray-200 px-3 py-2">
-                      <p className="font-medium text-neutral-gray-800">{user?.nombre}</p>
-                      <p className="text-xs text-neutral-gray-500">{user?.email}</p>
+                      <div className="flex items-center gap-3 mb-2">
+                        {user?.foto_perfil ? (
+                          <img
+                            src={user.foto_perfil.startsWith('http') ? user.foto_perfil : `${UPLOAD_URL}${user.foto_perfil.replace('/uploads', '')}`}
+                            alt={user?.nombre}
+                            className="h-10 w-10 rounded-full object-cover ring-2 ring-white"
+                          />
+                        ) : (
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-sm font-semibold text-white">
+                            {getInitials(user?.nombre)}
+                          </div>
+                        )}
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-neutral-gray-800">{user?.nombre}</p>
+                            {user?.plan === 'premium' && (
+                              <span className="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs px-2 py-0.5 rounded-full font-semibold">
+                                Premium
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-neutral-gray-500">{user?.email}</p>
+                        </div>
+                      </div>
                     </div>
                     <div className="py-1">
                       <Link
@@ -206,6 +237,27 @@ const Navbar = () => {
             className="border-t border-neutral-gray-200 md:hidden"
           >
             <div className="container mx-auto space-y-1 px-4 py-4">
+              {/* User Info Header (Mobile) */}
+              {isAuthenticated() && (
+                <div className="mb-4 flex items-center gap-3 rounded-lg bg-primary/5 px-4 py-3">
+                  {user?.foto_perfil ? (
+                    <img
+                      src={user.foto_perfil.startsWith('http') ? user.foto_perfil : `${UPLOAD_URL}${user.foto_perfil.replace('/uploads', '')}`}
+                      alt={user?.nombre}
+                      className="h-12 w-12 rounded-full object-cover ring-2 ring-white"
+                    />
+                  ) : (
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-lg font-semibold text-white">
+                      {getInitials(user?.nombre)}
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-semibold text-neutral-gray-800">{user?.nombre}</p>
+                    <p className="text-xs text-neutral-gray-500">{user?.email}</p>
+                  </div>
+                </div>
+              )}
+
               {navLinks.map((link) => (
                 <Link
                   key={link.href}

@@ -184,11 +184,17 @@ const RecipeManagement = () => {
                 <div className="flex flex-col md:flex-row gap-6">
                   {/* Imagen */}
                   <div className="md:w-32 h-32 flex-shrink-0">
-                    <img
-                      src={recipe.foto_principal || 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=200&h=200&fit=crop'}
-                      alt={recipe.nombre}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
+                    {recipe.foto_principal ? (
+                      <img
+                        src={recipe.foto_principal}
+                        alt={recipe.nombre}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg">
+                        <span className="text-4xl">{recipe.categoria_icono || '🍰'}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Contenido */}
