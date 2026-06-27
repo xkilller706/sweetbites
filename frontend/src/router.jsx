@@ -8,6 +8,7 @@ import Recipes from '@pages/public/Recipes'
 import RecipeDetail from '@pages/public/RecipeDetail'
 import About from '@pages/public/About'
 import Contact from '@pages/public/Contact'
+import Plans from '@pages/public/Plans'
 import NotFound from '@pages/public/NotFound'
 
 // Páginas de autenticación
@@ -38,6 +39,7 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/recipes" element={<Recipes />} />
       <Route path="/recipes/:id" element={<RecipeDetail />} />
+      <Route path="/plans" element={<Plans />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
 

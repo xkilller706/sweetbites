@@ -21,6 +21,7 @@ import { UPLOAD_URL } from '@utils/constants'
 const navLinks = [
   { href: '/', label: 'Inicio' },
   { href: '/recipes', label: 'Recetas' },
+  { href: '/plans', label: 'Planes' },
 ]
 
 const Navbar = () => {

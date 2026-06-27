@@ -21,7 +21,7 @@ router.get('/favorites', verifyToken, async (req, res) => {
             LEFT JOIN categories c ON r.categoria_id = c.id
             LEFT JOIN ratings rat ON r.id = rat.receta_id
             WHERE f.usuario_id = ?
-            GROUP BY r.id, c.id
+            GROUP BY r.id, c.id, f.fecha_guardado
             ORDER BY f.fecha_guardado DESC
         `, [req.user.id]);
 
