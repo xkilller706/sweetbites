@@ -498,6 +498,8 @@ router.post('/', verifyToken, checkRecipeLimits, async (req, res) => {
         }
 
         // MAPEAR dificultad del frontend al ENUM de MySQL
+        console.log('🔍 Dificultad recibida del frontend:', dificultad, 'Tipo:', typeof dificultad);
+
         const dificultadMap = {
             'facil': 'Fácil',
             'intermedio': 'Intermedio',
@@ -507,7 +509,9 @@ router.post('/', verifyToken, checkRecipeLimits, async (req, res) => {
             'Intermedio': 'Intermedio',
             'Difícil': 'Difícil'
         };
-        const dificultadFinal = dificultadMap[dificultad] || 'Intermedio';
+        const dificultadFinal = dificultadMap[dificultad] || dificultadMap[dificultad?.toLowerCase()] || 'Intermedio';
+
+        console.log('✅ Dificultad final mapeada:', dificultadFinal);
 
         // Determinar estado inicial según rol del usuario
         let estado = 'pendiente'; // Por defecto, pendiente de aprobación
@@ -530,8 +534,8 @@ router.post('/', verifyToken, checkRecipeLimits, async (req, res) => {
         if (ingredients && ingredients.length > 0) {
             for (const ing of ingredients) {
                 await db.execute(
-                    'INSERT INTO ingredients (receta_id, nombre, cantidad, unidad) VALUES (?, ?, ?, ?)',
-                    [recetaId, ing.nombre, ing.cantidad, ing.unidad]
+                    'INSERT INTO ingredients (receta_id, nombre, cantidad, unidad, seccion) VALUES (?, ?, ?, ?, ?)',
+                    [recetaId, ing.nombre, ing.cantidad, ing.unidad, ing.seccion || null]
                 );
             }
         }
@@ -558,10 +562,13 @@ router.post('/', verifyToken, checkRecipeLimits, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error al crear receta:', error);
+        console.error('❌ Error al crear receta:', error);
+        console.error('📦 Request body recibido:', JSON.stringify(req.body, null, 2));
+        console.error('💥 Stack trace:', error.stack);
         res.status(500).json({
             success: false,
-            message: 'Error al crear receta'
+            message: 'Error al crear receta',
+            error: process.env.NODE_ENV === 'production' ? 'Error interno del servidor' : error.message
         });
     }
 });

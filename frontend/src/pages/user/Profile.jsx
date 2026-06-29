@@ -149,7 +149,7 @@ const Profile = () => {
                   <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-primary flex items-center justify-center mx-auto">
                     {user?.foto_perfil ? (
                       <img
-                        src={`http://localhost:3000${user.foto_perfil}`}
+                        src={user.foto_perfil}
                         alt={user.nombre}
                         className="w-full h-full object-cover"
                       />
